@@ -5,12 +5,9 @@
 </ion-navbar>
 
 <ion-content class="home">
-  <ion-card>
-    <ion-card-header>
-      Card Header
-    </ion-card-header>
-    <ion-card-content>
-      Hello World
-    </ion-card-content>
-  </ion-card>
+  <ion-item>
+    <ion-label>Enter Site</ion-label>
+    <ion-input type="url" [(ngModel)]="siteInput"></ion-input>
+  </ion-item>
+  <button normal (click)="submit()">Go</button>
 </ion-content>
