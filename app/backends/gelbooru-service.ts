@@ -2,13 +2,13 @@ import {Post} from '../pages/gallery/gallery';
 import * as URI from 'urijs';
 
 export interface PostProvider {
-  getPosts(offset?: number): Array<Post>;
+  getPosts(offset?: number): Post[];
 }
 
 export class GelbooruService implements PostProvider {
   constructor(private siteAddress: string) {}
 
-  getPosts(offset: number = 0): Array<Post> {
+  getPosts(offset: number = 0): Post[] {
     let response = SAMPLE_DATA[this.siteAddress];
 
     if (!response) {
@@ -17,6 +17,7 @@ export class GelbooruService implements PostProvider {
     }
 
     let results = [];
+    let counter = 0;
     for (let post of response) {
       let image = URI({
         protocol: 'http',
@@ -35,7 +36,10 @@ export class GelbooruService implements PostProvider {
         thumbnail: thumbnail,
         sample: thumbnail,
         tags: post.tags.split(' '),
+        index: counter,
       });
+
+      counter += 1;
     }
 
     return results;

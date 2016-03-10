@@ -24,7 +24,7 @@ export class GalleryPage {
   buttonClick(post: Post) {
     this.nav.push(ImagePage, {
       posts: this.posts,
-      index: 0,
+      index: post.index,
     });
   }
 }
@@ -34,4 +34,5 @@ export interface Post {
   thumbnail: string,
   sample: string,
   tags: Array<string>,
+  index: number,
 }

@@ -5,7 +5,7 @@
 </ion-navbar>
 
 <ion-content>
-  <ion-slides pager>
+  <ion-slides [options]="swiperOptions">
     <ion-slide *ngFor="#post of posts">
       <scroll-content>
         <img src="{{post.sample}}">
