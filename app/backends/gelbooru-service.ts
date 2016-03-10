@@ -1,14 +1,8 @@
+import {Post} from '../pages/gallery/gallery';
 import * as URI from 'urijs';
 
 export interface PostProvider {
   getPosts(offset?: number): Array<Post>;
-}
-
-export interface Post {
-  image: string,
-  thumbnail: string,
-  sample: string,
-  tags: Array<string>,
 }
 
 export class GelbooruService implements PostProvider {
@@ -22,15 +16,19 @@ export class GelbooruService implements PostProvider {
       return [];
     }
 
-    let results: Array<Post> = [];
+    let results = [];
     for (let post of response) {
-      let image = URI(this.siteAddress)
-        .segment(['images', post.directory, post.image])
-        .toString();
+      let image = URI({
+        protocol: 'http',
+        hostname: this.siteAddress,
+        path: `images/${post.directory}/${post.image}`,
+      }).toString();
 
-      let thumbnail = URI(this.siteAddress)
-        .segment(['thumbnails', post.directory, 'thumbnail_c' + post.image])
-        .toString();
+      let thumbnail = URI({
+        protocol: 'http',
+        hostname: this.siteAddress,
+        path: `thumbnails/${post.directory}/thumbnail_${post.image}`,
+      }).toString();
 
       results.push({
         image: image,

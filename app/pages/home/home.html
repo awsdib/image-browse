@@ -5,9 +5,11 @@
 </ion-navbar>
 
 <ion-content class="home">
-  <ion-item>
-    <ion-label>Enter Site</ion-label>
-    <ion-input type="url" [(ngModel)]="siteInput"></ion-input>
-  </ion-item>
-  <button normal (click)="submit()">Go</button>
+  <form>
+    <ion-item>
+      <ion-label>Enter Site</ion-label>
+      <ion-input type="url" [(ngModel)]="siteInput"></ion-input>
+    </ion-item>
+    <button normal (click)="submit()">Go</button>
+  </form>
 </ion-content>

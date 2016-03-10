@@ -5,4 +5,11 @@
 </ion-navbar>
 
 <ion-content>
+  <ion-grid>
+    <ion-row *ngFor="#row of rows">
+      <ion-col width-33 *ngFor="#post of row">
+        <button class="thumbnail" style="background-image: url({{post.thumbnail}});"></button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
