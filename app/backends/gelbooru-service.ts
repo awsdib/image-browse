@@ -25,6 +25,18 @@ export class GelbooruService implements PostProvider {
         path: `images/${post.directory}/${post.image}`,
       }).toString();
 
+      let sample;
+      if (post.sample) {
+        sample = URI({
+          protocol: 'http',
+          hostname: this.siteAddress,
+          path: `samples/${post.directory}/sample_${post.image}`,
+        }).toString();
+      } else {
+        sample = image;
+      }
+
+
       let thumbnail = URI({
         protocol: 'http',
         hostname: this.siteAddress,
@@ -34,7 +46,7 @@ export class GelbooruService implements PostProvider {
       results.push({
         image: image,
         thumbnail: thumbnail,
-        sample: thumbnail,
+        sample: sample,
         tags: post.tags.split(' '),
         index: counter,
       });
