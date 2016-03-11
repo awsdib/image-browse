@@ -1,13 +1,14 @@
 import {Alert, NavController, NavParams, Page} from 'ionic-angular';
 import {ImagePage} from '../image/image';
-import {GelbooruService} from '../../backends/gelbooru-service';
+import {GelbooruService, Options} from '../../backends/gelbooru-service';
 
 @Page({
   templateUrl: 'build/pages/gallery/gallery.html',
   providers: [GelbooruService],
 })
 export class GalleryPage {
-  siteName: string;
+  hostname: string;
+  options: Options;
   posts: Post[];
   rows: Post[][];
 
@@ -16,8 +17,9 @@ export class GalleryPage {
     private provider: GelbooruService,
     navParams: NavParams
   ) {
-    this.siteName = navParams.get('siteName');
-    this.provider.setHostname(this.siteName);
+    this.hostname = navParams.get('hostname');
+    this.options = <Options>navParams.get('options');
+    this.provider.setHostname(this.hostname);
     this.provider.getPosts(
       0,
       (posts) => {
@@ -36,6 +38,7 @@ export class GalleryPage {
           subTitle: message,
           buttons: ['Ok'],
         });
+        this.nav.pop();
         this.nav.present(alert);
       }
     );

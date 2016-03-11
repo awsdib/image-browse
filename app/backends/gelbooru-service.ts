@@ -5,18 +5,23 @@ import {Post} from '../pages/gallery/gallery';
 import {SAFEBOORU_MOCK} from './mock-data/safebooru';
 import {RULE34_MOCK} from './mock-data/rule34';
 import * as URI from 'urijs';
-import {Parser, Options} from 'xml2js';
+import {Parser} from 'xml2js';
 
-export interface PostProvider {
+export interface Provider {
   getPosts(
-    offset: number,
+    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   );
 }
 
+export interface Options {
+  offset?: number,
+  tags?: string[],
+}
+
 @Injectable()
-export class GelbooruService implements PostProvider {
+export class GelbooruService implements Provider {
   hostname: string;
 
   constructor(private platform: Platform, private http: Http) {}
@@ -27,7 +32,7 @@ export class GelbooruService implements PostProvider {
   }
 
   getPosts(
-    offset: number,
+    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   ) {
@@ -37,32 +42,48 @@ export class GelbooruService implements PostProvider {
       return errorCallback('Site is not supported.');
     }
 
+    // Always build the request url, even on desktop, so we can debug the result.
+    let requestUrl = this.buildRequestUrl(options);
+
     if (this.platform.is('core')) {
       let response = siteConfig.sampleData;
       let posts = this.processResponse(response, successCallback, errorCallback);
     } else {
       // Make a web request to the server to get the posts list.
-      let requestUrl = URI({
-        protocol: 'http',
-        hostname: this.hostname,
-        path: 'index.php',
-        query: 'page=dapi&s=post&q=index',
-      }).toString();
-      console.log(`request url: ${requestUrl}`);
 
       this.http.get(requestUrl)
         .subscribe(
           response => {
-            console.log('response:');
-            console.log(response);
             let posts = this.processResponse(response.text(), successCallback, errorCallback);
           },
           error => {
             errorCallback(error.toString());
-          },
-          () => {}
+          }
         );
     }
+  }
+
+  buildRequestUrl(options: Options): string {
+    let requestUrl = URI({
+      protocol: 'http',
+      hostname: this.hostname,
+      path: 'index.php',
+      query: 'page=dapi&s=post&q=index',
+    });
+
+    // Apply each of the options to the search.
+    if (options.offset) {
+      requestUrl.addQuery({ 'pid': options.offset });
+    }
+
+    if (options.tags && options.tags.length > 0) {
+      let tagsString = options.tags.join('+');
+      requestUrl.addQuery({ 'tags': tagsString });
+    }
+
+    console.log(`request url: ${requestUrl}`);
+
+    return requestUrl.toString();
   }
 
   processResponse(
