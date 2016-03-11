@@ -224,6 +224,6 @@ interface JQuery {
 
 declare var URI: uri.URIStatic;
 
-declare module 'URI' {
+declare module 'urijs' {
     export = URI;
 }
