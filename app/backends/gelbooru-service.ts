@@ -87,8 +87,6 @@ export class GelbooruService implements PostProvider {
       }
 
       // Xml parsed successfully.
-      console.log('parsed result:');
-      console.log(parsedData);
       let siteConfig = SITE_CONFIGS[this.hostname];
 
       let results = [];
