@@ -6,7 +6,7 @@ import * as gallery from '../gallery/gallery';
   templateUrl: 'build/pages/home/home.html'
 })
 export class HomePage {
-  siteInput: string = '';
+  siteInput: string = 'safebooru.org';
 
   constructor(private nav: NavController) {}
 
