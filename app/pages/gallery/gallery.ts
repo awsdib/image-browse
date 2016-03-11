@@ -17,8 +17,8 @@ export class GalleryPage {
     navParams: NavParams
   ) {
     this.siteName = navParams.get('siteName');
+    this.provider.setHostname(this.siteName);
     this.provider.getPosts(
-      this.siteName,
       0,
       (posts) => {
         this.posts = posts;
