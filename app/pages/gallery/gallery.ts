@@ -21,7 +21,7 @@ export class GalleryPage {
     this.options = <Options>navParams.get('options');
     this.provider.setHostname(this.hostname);
     this.provider.getPosts(
-      0,
+      this.options,
       (posts) => {
         this.posts = posts;
 
@@ -46,6 +46,7 @@ export class GalleryPage {
 
   buttonClick(post: Post) {
     this.nav.push(ImagePage, {
+      hostname: this.hostname,
       posts: this.posts,
       index: post.index,
     });

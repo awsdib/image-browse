@@ -10,7 +10,7 @@
       <scroll-content>
         <img src="{{post.display}}">
         <ion-list>
-          <ion-item *ngFor="#tag of post.tags">{{tag}}</ion-item>
+          <button ion-item *ngFor="#tag of post.tags" (click)="onTagClick(tag)">{{tag}}</button>
         </ion-list>
       </scroll-content>
     </ion-slide>

@@ -1,5 +1,5 @@
 import {NavController, NavParams, Page} from 'ionic-angular';
-import {Post} from '../gallery/gallery';
+import {GalleryPage, Post} from '../gallery/gallery';
 
 @Page({
   templateUrl: 'build/pages/image/image.html'
@@ -10,7 +10,7 @@ export class ImagePage {
   swiperOptions: any;
 
   constructor(private nav: NavController, navParams: NavParams) {
-    this.hostname = navParams.get('siteName');
+    this.hostname = navParams.get('hostname');
 
     let basePosts = navParams.get('posts');
     let index = navParams.get('index');
@@ -35,6 +35,15 @@ export class ImagePage {
     let post = this.posts[index];
 
     post.load();
+  }
+
+  onTagClick(tag: string) {
+    this.nav.push(GalleryPage, {
+      hostname: this.hostname,
+      options: {
+        tags: [tag],
+      },
+    });
   }
 }
 

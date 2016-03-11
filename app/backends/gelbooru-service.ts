@@ -27,7 +27,6 @@ export class GelbooruService implements Provider {
   constructor(private platform: Platform, private http: Http) {}
 
   setHostname(hostname: string) {
-    // TODO: Verify that hostname is supported.
     this.hostname = hostname;
   }
 
