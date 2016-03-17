@@ -1,38 +1,56 @@
 import {NavController, NavParams, Page} from 'ionic-angular';
 import {GalleryPage, Post} from '../gallery/gallery';
 
+const ACTIVE_SLIDES = 7;
+const MIDDLE_INDEX = 3;
+
 @Page({
   templateUrl: 'build/pages/image/image.html'
 })
 export class ImagePage {
   hostname: string;
-  posts: ImagePost[];
+  posts: ImagePost[] = [];
+  activePosts: ImagePost[];
+  index: number;
   swiperOptions: any;
+  swiper: any;
 
   constructor(private nav: NavController, navParams: NavParams) {
     this.hostname = navParams.get('hostname');
 
     let basePosts = navParams.get('posts');
-    let index = navParams.get('index');
-    this.swiperOptions = {
-      initialSlide: index,
-      longSwipesRatio: 0.2,
-    };
+    this.index = navParams.get('index');
 
     // Add extra data to posts to use in the image view.
-    this.posts = [];
     for (let post of basePosts) {
       this.posts.push(new ImagePost(post));
     }
 
+    // TODO: Figure out why this line is needed. If it's not here the indices are wrong when you
+    // first click on an image.
+    this.activePosts = this.posts.slice(0, this.posts.length + 1);
+
+    this.swiperOptions = {
+      initialSlide: 0,
+      longSwipesRatio: 0.2,
+      onInit: (swiper) => { this.swiper = swiper; },
+    };
+  }
+
+  // Delay initialization that requires access to the Swiper object until the page enters so that
+  // we can find it in the DOM.
+  onPageDidEnter() {
     // Load image for first post.
-    let post = this.posts[index];
+    let post = this.posts[this.index];
     post.load();
+
+    this.overrideIndex(this.index);
   }
 
   onSlideChange($event) {
     let index = $event.activeIndex;
-    let post = this.posts[index];
+    let post = this.activePosts[index];
+    this.overrideIndex(post.index);
 
     post.load();
   }
@@ -44,6 +62,37 @@ export class ImagePage {
         tags: [tag],
       },
     });
+  }
+
+  overrideIndex(index: number) {
+    console.log(`Overriding index to ${index}`);
+    this.swiper.activeIndex = MIDDLE_INDEX;
+
+    let startIndex = index - MIDDLE_INDEX;
+    if (startIndex < 0) {
+      this.swiper.activeIndex = MIDDLE_INDEX + startIndex;
+      startIndex = 0;
+      console.log(`Active posts are at the front of the list - active index: ${this.swiper.activeIndex}`);
+    }
+
+    let endIndex = startIndex + ACTIVE_SLIDES;
+    if (endIndex > this.posts.length) {
+      this.swiper.activeIndex = MIDDLE_INDEX + endIndex - this.posts.length;
+      startIndex = this.posts.length - ACTIVE_SLIDES;
+
+      console.log(`Active posts are at the end of the list - active index: ${this.swiper.activeIndex}`);
+
+      if (index == this.posts.length - 1) {
+        this.swiper.isEnd = true;
+        console.log("setting to end");
+      }
+    }
+
+    this.activePosts = this.posts.slice(startIndex, startIndex + ACTIVE_SLIDES);
+    console.log(`active index: ${this.swiper.activeIndex}`);
+    console.log(this.activePosts);
+
+    this.swiper.update(true);
   }
 }
 

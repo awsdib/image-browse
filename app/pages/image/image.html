@@ -6,7 +6,7 @@
 
 <ion-content>
   <ion-slides [options]="swiperOptions" (change)="onSlideChange($event)">
-    <ion-slide *ngFor="#post of posts">
+    <ion-slide *ngFor="#post of activePosts">
       <scroll-content>
         <img src="{{post.display}}">
         <ion-list>
