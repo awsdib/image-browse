@@ -46,14 +46,22 @@ export class GelbooruService implements Provider {
 
     if (this.platform.is('core')) {
       let response = siteConfig.sampleData;
-      let posts = this.processResponse(response, successCallback, errorCallback);
+      let posts = this.processResponse(
+        response,
+        options,
+        successCallback,
+        errorCallback);
     } else {
       // Make a web request to the server to get the posts list.
 
       this.http.get(requestUrl)
         .subscribe(
           response => {
-            let posts = this.processResponse(response.text(), successCallback, errorCallback);
+            let posts = this.processResponse(
+              response.text(),
+              options,
+              successCallback,
+              errorCallback);
           },
           error => {
             errorCallback(error.toString());
@@ -87,6 +95,7 @@ export class GelbooruService implements Provider {
 
   processResponse(
     response: string,
+    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   ) {
@@ -111,7 +120,19 @@ export class GelbooruService implements Provider {
 
       let results = [];
       let counter = 0;
-      for (let post of parsedData.post.slice(0, 100)) {
+      if (options.offset) {
+        counter = options.offset;
+      }
+      let responsePosts = parsedData.post;
+
+      // If running in a desktop browser the response string is going to be a
+      // hardcoded list of 1000 posts so we need to manually slice according to
+      // how the server would respond.
+      if (this.platform.is('core')) {
+        responsePosts = responsePosts.slice(counter, counter + 100);
+      }
+
+      for (let post of responsePosts) {
         // NOTE: Rule34 has weird behavior around the image and sample urls. The urls its provides
         // use the subdomain 'img.rule34.xxx' but the url for the image and sample actually
         // redirect to the image page on the website, leading to a broken image in
@@ -131,7 +152,7 @@ export class GelbooruService implements Provider {
           image: image.toString(),
           sample: sample.toString(),
           thumbnail: thumbnail.toString(),
-          tags: post.tags.split(' '),
+          tags: post.tags.trim().split(' '),
           index: counter,
         });
 
