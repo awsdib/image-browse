@@ -33,18 +33,20 @@ export class ImagePage {
     this.swiperOptions = {
       initialSlide: 0,
       longSwipesRatio: 0.2,
-      onInit: (swiper) => { this.swiper = swiper; },
+
+      // Delay initialization that requires access to the Swiper object until the page enters so that
+      // we can find it in the DOM.
+      onInit: (swiper) => {
+        // Capture the Swiper instance.
+        this.swiper = swiper;
+
+        // Load image for first post.
+        let post = this.posts[this.index];
+        post.load();
+
+        this.overrideIndex(this.index);
+      },
     };
-  }
-
-  // Delay initialization that requires access to the Swiper object until the page enters so that
-  // we can find it in the DOM.
-  onPageDidEnter() {
-    // Load image for first post.
-    let post = this.posts[this.index];
-    post.load();
-
-    this.overrideIndex(this.index);
   }
 
   onSlideChange($event) {
@@ -65,33 +67,11 @@ export class ImagePage {
   }
 
   overrideIndex(index: number) {
-    console.log(`Overriding index to ${index}`);
-    this.swiper.activeIndex = MIDDLE_INDEX;
+    let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
+    let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);
 
-    let startIndex = index - MIDDLE_INDEX;
-    if (startIndex < 0) {
-      this.swiper.activeIndex = MIDDLE_INDEX + startIndex;
-      startIndex = 0;
-      console.log(`Active posts are at the front of the list - active index: ${this.swiper.activeIndex}`);
-    }
-
-    let endIndex = startIndex + ACTIVE_SLIDES;
-    if (endIndex > this.posts.length) {
-      this.swiper.activeIndex = MIDDLE_INDEX + endIndex - this.posts.length;
-      startIndex = this.posts.length - ACTIVE_SLIDES;
-
-      console.log(`Active posts are at the end of the list - active index: ${this.swiper.activeIndex}`);
-
-      if (index == this.posts.length - 1) {
-        this.swiper.isEnd = true;
-        console.log("setting to end");
-      }
-    }
-
-    this.activePosts = this.posts.slice(startIndex, startIndex + ACTIVE_SLIDES);
-    console.log(`active index: ${this.swiper.activeIndex}`);
-    console.log(this.activePosts);
-
+    this.activePosts = this.posts.slice(startIndex, endIndex);
+    this.swiper.activeIndex = index - startIndex;
     this.swiper.update(true);
   }
 }
@@ -137,3 +117,7 @@ class ImagePost implements Post {
     image.src = this.sample;
   };
 }
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+};
