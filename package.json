@@ -24,6 +24,8 @@
   },
   "name": "image-browse",
   "description": "image-browse: An Ionic project",
+  "version": "0.1.0",
+  "homepage": "https://github.com/excaliburHisSheath/image-browse",
   "cordovaPlugins": [
     "cordova-plugin-device",
     "cordova-plugin-console",
