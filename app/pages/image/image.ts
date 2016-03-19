@@ -11,48 +11,42 @@ export class ImagePage {
   hostname: string;
   posts: ImagePost[] = [];
   activePosts: ImagePost[];
-  index: number;
   swiperOptions: any;
   swiper: any;
 
   constructor(private nav: NavController, navParams: NavParams) {
     this.hostname = navParams.get('hostname');
 
-    let basePosts = navParams.get('posts');
-    this.index = navParams.get('index');
-
     // Add extra data to posts to use in the image view.
+    let basePosts = navParams.get('posts');
     for (let post of basePosts) {
       this.posts.push(new ImagePost(post));
     }
 
-    // TODO: Figure out why this line is needed. If it's not here the indices are wrong when you
-    // first click on an image.
-    this.activePosts = this.posts.slice(0, this.posts.length + 1);
+    let index = navParams.get('index');
+
+    // Load image for first post.
+    let post = this.posts[index];
+    post.load();
+
+    let activeIndex = this.overrideIndex(index);
 
     this.swiperOptions = {
-      initialSlide: 0,
+      initialSlide: activeIndex,
       longSwipesRatio: 0.2,
 
-      // Delay initialization that requires access to the Swiper object until the page enters so that
-      // we can find it in the DOM.
-      onInit: (swiper) => {
-        // Capture the Swiper instance.
-        this.swiper = swiper;
-
-        // Load image for first post.
-        let post = this.posts[this.index];
-        post.load();
-
-        this.overrideIndex(this.index);
-      },
+      onInit: (swiper) => { this.swiper = swiper; },
     };
   }
 
   onSlideChange($event) {
     let index = $event.activeIndex;
     let post = this.activePosts[index];
-    this.overrideIndex(post.index);
+    let activeIndex = this.overrideIndex(post.index);
+
+    // Force Swiper to go to the newly active slide.
+    this.swiper.activeIndex = activeIndex;
+    this.swiper.update(true);
 
     post.load();
   }
@@ -66,13 +60,13 @@ export class ImagePage {
     });
   }
 
-  overrideIndex(index: number) {
+  overrideIndex(index: number): number {
     let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
     let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);
+    let activeIndex = index - startIndex;
 
     this.activePosts = this.posts.slice(startIndex, endIndex);
-    this.swiper.activeIndex = index - startIndex;
-    this.swiper.update(true);
+    return activeIndex;
   }
 }
 
