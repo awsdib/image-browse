@@ -23,8 +23,8 @@ export class GalleryPage {
 
   onPageLoaded() {
     this.provider.setHostname(this.hostname);
+    this.provider.setOptions(this.options);
     this.provider.getPosts(
-      this.options,
       (posts) => {
         this.posts = posts;
         this.rebuildGrid();
@@ -52,10 +52,6 @@ export class GalleryPage {
 
   onInfinite($event: any) {
     this.provider.getPosts(
-      {
-        offset: this.posts.length,
-        tags: this.options.tags,
-      },
       posts => {
         console.log('infinite result:');
         console.log(posts);

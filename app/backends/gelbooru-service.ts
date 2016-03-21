@@ -8,21 +8,27 @@ import * as URI from 'urijs';
 import {Parser} from 'xml2js';
 
 export interface Provider {
+  setHostname(hostname: string);
+
+  setOptions(options: Options);
+
   getPosts(
-    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   );
 }
 
 export interface Options {
-  offset?: number,
   tags?: string[],
 }
+
+const POSTS_PER_PAGE: number = 100;
 
 @Injectable()
 export class GelbooruService implements Provider {
   hostname: string;
+  options: Options;
+  page: number = 0;
 
   constructor(private platform: Platform, private http: Http) {}
 
@@ -30,8 +36,11 @@ export class GelbooruService implements Provider {
     this.hostname = hostname;
   }
 
+  setOptions(options: Options) {
+    this.options = options;
+  }
+
   getPosts(
-    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   ) {
@@ -42,24 +51,25 @@ export class GelbooruService implements Provider {
     }
 
     // Always build the request url, even on desktop, so we can debug the result.
-    let requestUrl = this.buildRequestUrl(options);
+    let requestUrl = this.buildRequestUrl();
 
     if (this.platform.is('core')) {
-      let response = siteConfig.sampleData;
-      let posts = this.processResponse(
-        response,
-        options,
-        successCallback,
-        errorCallback);
+      // For desktop testing use sample data. Use setTimeout() to simulate network delay (and not
+      // block the main thread).
+      window.setTimeout(() => {
+        let response = siteConfig.sampleData;
+        this.processResponse(
+          response,
+          successCallback,
+          errorCallback);
+      }, 500);
     } else {
       // Make a web request to the server to get the posts list.
-
       this.http.get(requestUrl)
         .subscribe(
           response => {
-            let posts = this.processResponse(
+            this.processResponse(
               response.text(),
-              options,
               successCallback,
               errorCallback);
           },
@@ -70,7 +80,7 @@ export class GelbooruService implements Provider {
     }
   }
 
-  buildRequestUrl(options: Options): string {
+  buildRequestUrl(): string {
     let requestUrl = URI({
       protocol: 'http',
       hostname: this.hostname,
@@ -78,13 +88,17 @@ export class GelbooruService implements Provider {
       query: 'page=dapi&s=post&q=index',
     });
 
-    // Apply each of the options to the search.
-    if (options.offset) {
-      requestUrl.addQuery({ 'pid': options.offset });
-    }
+    // Add the page number.
+    requestUrl.addQuery({ 'pid': this.page });
 
-    if (options.tags && options.tags.length > 0) {
-      let tagsString = options.tags.join('+');
+    // Add the number of posts per page. At the time of writing this defaults to 100 but we include
+    // it in the URL query in case this varies between sites.
+    requestUrl.addQuery({ 'limit': POSTS_PER_PAGE });
+
+
+    // Apply each of the options to the search.
+    if (this.options.tags && this.options.tags.length > 0) {
+      let tagsString = this.options.tags.join('+');
       requestUrl.addQuery({ 'tags': tagsString });
     }
 
@@ -95,7 +109,6 @@ export class GelbooruService implements Provider {
 
   processResponse(
     response: string,
-    options: Options,
     successCallback: (posts: Post[]) => void,
     errorCallback: (message: string) => void
   ) {
@@ -119,17 +132,14 @@ export class GelbooruService implements Provider {
       let siteConfig = SITE_CONFIGS[this.hostname];
 
       let results = [];
-      let counter = 0;
-      if (options.offset) {
-        counter = options.offset;
-      }
+      let counter = this.page * POSTS_PER_PAGE;
       let responsePosts = parsedData.post;
 
       // If running in a desktop browser the response string is going to be a
       // hardcoded list of 1000 posts so we need to manually slice according to
       // how the server would respond.
       if (this.platform.is('core')) {
-        responsePosts = responsePosts.slice(counter, counter + 100);
+        responsePosts = responsePosts.slice(counter, counter + POSTS_PER_PAGE);
       }
 
       for (let post of responsePosts) {
@@ -158,6 +168,9 @@ export class GelbooruService implements Provider {
 
         counter += 1;
       }
+
+      // Increment the page count on a successful result.
+      this.page += 1;
 
       successCallback(results);
     });
