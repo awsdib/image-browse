@@ -13,9 +13,11 @@ export class ImagePage {
   activePosts: ImagePost[];
   swiperOptions: any;
   swiper: any;
+  options: any;
 
   constructor(private nav: NavController, navParams: NavParams) {
     this.hostname = navParams.get('hostname');
+    this.options = navParams.get('options');
 
     // Add extra data to posts to use in the image view.
     let basePosts = navParams.get('posts');
@@ -52,11 +54,12 @@ export class ImagePage {
   }
 
   onTagClick(tag: string) {
+    let options = this.options.clone();
+    options.tags = [tag];
+
     this.nav.push(GalleryPage, {
       hostname: this.hostname,
-      options: {
-        tags: [tag],
-      },
+      options: options,
     });
   }
 
@@ -104,7 +107,6 @@ class ImagePost implements Post {
 
     let image = new Image();
     image.onload = () => {
-      console.log(`Image loaded: ${this.sample}`);
       this.display = this.sample;
       this.loaded = true;
     };

@@ -18,7 +18,10 @@ export class GalleryPage {
     navParams: NavParams
   ) {
     this.hostname = navParams.get('hostname');
-    this.options = <Options>navParams.get('options');
+    this.options = navParams.get('options');
+  }
+
+  onPageLoaded() {
     this.provider.setHostname(this.hostname);
     this.provider.getPosts(
       this.options,
@@ -38,11 +41,12 @@ export class GalleryPage {
     );
   }
 
-  buttonClick(post: Post) {
+  onImageClick(post: Post) {
     this.nav.push(ImagePage, {
       hostname: this.hostname,
       posts: this.posts,
       index: post.index,
+      options: this.options.clone(),
     });
   }
 
@@ -50,6 +54,7 @@ export class GalleryPage {
     this.provider.getPosts(
       {
         offset: this.posts.length,
+        tags: this.options.tags,
       },
       posts => {
         console.log('infinite result:');
