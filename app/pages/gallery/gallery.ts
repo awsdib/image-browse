@@ -11,6 +11,7 @@ export class GalleryPage {
   options: Options;
   posts: Post[];
   rows: Post[][];
+  more: boolean = true;
 
   constructor(
     private nav: NavController,
@@ -25,9 +26,10 @@ export class GalleryPage {
     this.provider.setHostname(this.hostname);
     this.provider.setOptions(this.options);
     this.provider.getPosts(
-      (posts) => {
+      (posts, more) => {
         this.posts = posts;
         this.rebuildGrid();
+        this.more = more;
       },
       (message: string) => {
         let alert = Alert.create({
@@ -52,12 +54,12 @@ export class GalleryPage {
 
   onInfinite($event: any) {
     this.provider.getPosts(
-      posts => {
-        console.log('infinite result:');
-        console.log(posts);
+      (posts, more) => {
         Array.prototype.push.apply(this.posts, posts);
+        console.log(`total posts: ${this.posts.length}`);
         this.rebuildGrid();
         $event.complete();
+        $event.enable(more);
       },
       error => {
         console.log(`Error getting more posts: ${error}`);

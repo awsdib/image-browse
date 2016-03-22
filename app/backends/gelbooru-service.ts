@@ -13,7 +13,7 @@ export interface Provider {
   setOptions(options: Options);
 
   getPosts(
-    successCallback: (posts: Post[]) => void,
+    successCallback: (posts: Post[], more: boolean) => void,
     errorCallback: (message: string) => void
   );
 }
@@ -29,6 +29,7 @@ export class GelbooruService implements Provider {
   hostname: string;
   options: Options;
   page: number = 0;
+  posts: Post[] = [];
 
   constructor(private platform: Platform, private http: Http) {}
 
@@ -41,7 +42,7 @@ export class GelbooruService implements Provider {
   }
 
   getPosts(
-    successCallback: (posts: Post[]) => void,
+    successCallback: (posts: Post[], more: boolean) => void,
     errorCallback: (message: string) => void
   ) {
     // TODO: Normalize hostname first.
@@ -95,7 +96,6 @@ export class GelbooruService implements Provider {
     // it in the URL query in case this varies between sites.
     requestUrl.addQuery({ 'limit': POSTS_PER_PAGE });
 
-
     // Apply each of the options to the search.
     if (this.options.tags && this.options.tags.length > 0) {
       let tagsString = this.options.tags.join('+');
@@ -109,7 +109,7 @@ export class GelbooruService implements Provider {
 
   processResponse(
     response: string,
-    successCallback: (posts: Post[]) => void,
+    successCallback: (posts: Post[], more: boolean) => void,
     errorCallback: (message: string) => void
   ) {
     // Parse the XML response.
@@ -172,7 +172,13 @@ export class GelbooruService implements Provider {
       // Increment the page count on a successful result.
       this.page += 1;
 
-      successCallback(results);
+      // Add loaded posts to the cached list of posts.
+      Array.prototype.push.apply(this.posts, results);
+
+      // Determine if all posts have been loaded.
+      let more = this.posts.length < parsedData.count;
+
+      successCallback(results, more);
     });
   }
 }
