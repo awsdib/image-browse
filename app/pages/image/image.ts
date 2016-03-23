@@ -63,6 +63,32 @@ export class ImagePage {
     });
   }
 
+  onAddTagClick(tag: string) {
+    let options = this.options.clone();
+    if (!options.tags) {
+      options.tags = [];
+    }
+    options.tags.push(tag);
+
+    this.nav.push(GalleryPage, {
+      hostname: this.hostname,
+      options: options,
+    });
+  }
+
+  onRemoveTagClick(tag: string) {
+    let options = this.options.clone();
+    if (!options.excludeTags) {
+      options.excludeTags = [];
+    }
+    options.excludeTags.push(tag);
+
+    this.nav.push(GalleryPage, {
+      hostname: this.hostname,
+      options: options,
+    });
+  }
+
   overrideIndex(index: number): number {
     let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
     let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);

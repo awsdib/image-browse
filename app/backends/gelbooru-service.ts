@@ -20,6 +20,7 @@ export interface Provider {
 
 export interface Options {
   tags?: string[],
+  excludeTags?: string[],
 }
 
 const POSTS_PER_PAGE: number = 100;
@@ -96,10 +97,18 @@ export class GelbooruService implements Provider {
     // it in the URL query in case this varies between sites.
     requestUrl.addQuery({ 'limit': POSTS_PER_PAGE });
 
-    // Apply each of the options to the search.
+    // Add included and excluded tags to the search string.
+    let tagString = '';
     if (this.options.tags && this.options.tags.length > 0) {
-      let tagsString = this.options.tags.join('+');
-      requestUrl.addQuery({ 'tags': tagsString });
+      tagString = this.options.tags.join(' ');
+    }
+
+    if (this.options.excludeTags && this.options.excludeTags.length > 0) {
+      tagString += ' -' + this.options.excludeTags.join(' -');
+    }
+
+    if (tagString != '') {
+      requestUrl.addQuery({ 'tags': tagString });
     }
 
     console.log(`request url: ${requestUrl}`);

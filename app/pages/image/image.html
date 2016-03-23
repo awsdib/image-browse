@@ -10,7 +10,11 @@
       <scroll-content>
         <img src="{{post.display}}">
         <ion-list>
-          <button ion-item *ngFor="#tag of post.tags" (click)="onTagClick(tag)">{{tag}}</button>
+          <ion-item *ngFor="#tag of post.tags">
+            <button clear (click)="onTagClick(tag)">{{tag}}</button>
+            <button clear item-right (click)="onAddTagClick(tag)"><ion-icon name="add-circle"></ion-icon></button>
+            <button clear item-right (click)="onRemoveTagClick(tag)"><ion-icon name="remove-circle"></ion-icon></button>
+          </ion-item>
         </ion-list>
       </scroll-content>
     </ion-slide>
