@@ -1,4 +1,3 @@
-import 'es6-shim';
 import {App, Platform} from 'ionic-angular';
 import {HomePage} from './pages/home/home';
 
