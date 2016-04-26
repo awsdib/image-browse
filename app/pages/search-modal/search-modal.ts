@@ -33,6 +33,11 @@ export class SearchModal {
     this.editTags.push({text: ""});
   }
 
+  onRemoveTag(tag: any) {
+    let index = this.editTags.indexOf(tag);
+    this.editTags.splice(index, 1);
+  }
+
   onClose() {
     this.nav.pop();
   }

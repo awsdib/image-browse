@@ -8,7 +8,7 @@
   <ion-list>
     <ion-item *ngFor="#tag of editTags">
       <ion-input [(ngModel)]="tag.text"></ion-input>
-      <button clear item-right (click)="onRemoveTagClick(tag)"><ion-icon name="remove-circle"></ion-icon></button>
+      <button clear item-right (click)="onRemoveTag(tag)"><ion-icon name="remove-circle"></ion-icon></button>
     </ion-item>
   </ion-list>
   <button (click)="onAddTag()">Add Tag</button>
