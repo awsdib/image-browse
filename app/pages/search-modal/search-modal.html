@@ -1,0 +1,25 @@
+<ion-content padding>
+  <ion-item>
+    <ion-label>http://</ion-label>
+    <ion-input type="url" [(ngModel)]="hostname"></ion-input>
+  </ion-item>
+
+  <h2>Search Tags</h2>
+  <ion-list>
+    <ion-item *ngFor="#tag of editTags">
+      <ion-input [(ngModel)]="tag.text"></ion-input>
+      <button clear item-right (click)="onRemoveTagClick(tag)"><ion-icon name="remove-circle"></ion-icon></button>
+    </ion-item>
+  </ion-list>
+
+  <!-- <h2>Excluded Tags</h2>
+  <ion-list>
+    <ion-item *ngFor="#tag of options.excludeTags">
+      <ion-input [(ngModel)]="tag"></ion-input>
+      <button clear item-right (click)="onRemoveTagClick(tag)"><ion-icon name="remove-circle"></ion-icon></button>
+    </ion-item>
+  </ion-list> -->
+
+  <button (click)="onClose()">Cancel</button>
+  <button (click)="onSearch()">Search</button>
+</ion-content>`
