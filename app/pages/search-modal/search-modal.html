@@ -13,6 +13,15 @@
   </ion-list>
   <button (click)="onAddTag()">Add Tag</button>
 
+  <h2>Exclude Tags</h2>
+  <ion-list>
+    <ion-item *ngFor="#tag of editExcludeTags">
+      <ion-input [(ngModel)]="tag.text"></ion-input>
+      <button clear item-right (click)="onRemoveExcludeTag(tag)"><ion-icon name="remove-circle"></ion-icon></button>
+    </ion-item>
+    <button (click)="onAddExcludeTag()">Add Tag</button>
+  </ion-list>
+
   <button (click)="onClose()">Cancel</button>
   <button (click)="onSearch()">Search</button>
 </ion-content>`

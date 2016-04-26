@@ -27,6 +27,15 @@ export class SearchModal {
         });
       }
     }
+
+    if (this.options.excludeTags != null)
+    {
+      for (let tag of this.options.excludeTags) {
+        this.editExcludeTags.push({
+          text: tag,
+        });
+      }
+    }
   }
 
   onAddTag() {
@@ -38,6 +47,15 @@ export class SearchModal {
     this.editTags.splice(index, 1);
   }
 
+  onAddExcludeTag() {
+    this.editExcludeTags.push({text: ""});
+  }
+
+  onRemoveExcludeTag(tag: any) {
+    let index = this.editExcludeTags.indexOf(tag);
+    this.editExcludeTags.splice(index, 1);
+  }
+
   onClose() {
     this.nav.pop();
   }
@@ -46,7 +64,7 @@ export class SearchModal {
     // Create a new Options from the edited tags.
     let options = {
       tags: this.editTags.map(tag => tag.text),
-      excludeTags: this.options.excludeTags,
+      excludeTags: this.editExcludeTags.map(tag => tag.text),
     };
 
     console.log("options: ");
