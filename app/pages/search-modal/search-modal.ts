@@ -14,7 +14,6 @@ export class SearchModal {
 
   constructor(
     private nav: NavController,
-    private viewController: ViewController,
     private navParams: NavParams
   ) {
     this.hostname = navParams.get('hostname');
@@ -31,7 +30,7 @@ export class SearchModal {
   }
 
   onClose() {
-    this.viewController.dismiss();
+    this.nav.pop();
   }
 
   onSearch() {
@@ -45,9 +44,11 @@ export class SearchModal {
     console.log(options);
 
     // TODO: Validate url input before sending it to gallery page.
-    this.nav.push(gallery.GalleryPage, {
-      'hostname': this.hostname,
-      'options': options,
+    this.nav.pop().then(() => {
+      this.nav.push(gallery.GalleryPage, {
+        'hostname': this.hostname,
+        'options': options,
+      });
     });
   }
 }
