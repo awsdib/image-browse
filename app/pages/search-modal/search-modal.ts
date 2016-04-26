@@ -29,6 +29,10 @@ export class SearchModal {
     }
   }
 
+  onAddTag() {
+    this.editTags.push({text: ""});
+  }
+
   onClose() {
     this.nav.pop();
   }
