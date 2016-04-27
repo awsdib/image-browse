@@ -1,6 +1,7 @@
-import {Alert, NavController, NavParams, Page} from 'ionic-angular';
+import {Alert, Modal, NavController, NavParams, Page} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {GelbooruService, Options} from '../../backends/gelbooru-service';
+import {SearchModal} from '../search-modal/search-modal';
 
 @Page({
   templateUrl: 'build/pages/gallery/gallery.html',
@@ -50,6 +51,14 @@ export class GalleryPage {
       index: post.index,
       options: this.options.clone(),
     });
+  }
+
+  onSearchClick() {
+    let modal = Modal.create(SearchModal, {
+      hostname: this.hostname,
+      options: this.options.clone(),
+    });
+    this.nav.present(modal);
   }
 
   onInfinite($event: any) {

@@ -1,6 +1,5 @@
 import {NavController, Page} from 'ionic-angular';
-import * as gallery from '../gallery/gallery';
-import * as URI from 'urijs';
+import {GalleryPage} from '../gallery/gallery';
 
 @Page({
   templateUrl: 'build/pages/home/home.html'
@@ -12,7 +11,7 @@ export class HomePage {
 
   submit() {
     // TODO: Validate url input before sending it to gallery page.
-    this.nav.push(gallery.GalleryPage, {
+    this.nav.push(GalleryPage, {
       'hostname': this.siteInput,
       'options': {},
     });
