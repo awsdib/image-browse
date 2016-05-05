@@ -16,4 +16,10 @@ export class HomePage {
       'options': {},
     });
   }
+
+  collectState() : any {
+    return {
+      siteInput: this.siteInput,
+    };
+  }
 }

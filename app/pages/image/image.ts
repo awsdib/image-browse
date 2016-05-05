@@ -41,6 +41,15 @@ export class ImagePage {
     };
   }
 
+  collectState() {
+    return {
+      hostname: this.hostname,
+      posts: this.posts,
+      activePosts: this.posts,
+      options: this.options,
+    };
+  }
+
   onSlideChange($event) {
     let index = $event.activeIndex;
     let post = this.activePosts[index];

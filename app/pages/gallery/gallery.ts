@@ -23,6 +23,15 @@ export class GalleryPage {
     this.options = navParams.get('options');
   }
 
+  collectState() {
+    return {
+      hostname: this.hostname,
+      options: this.options,
+      posts: this.posts,
+      more: this.more, // TODO: Do we want to save this or should we have to check again on startup?
+    };
+  }
+
   onPageLoaded() {
     this.provider.setHostname(this.hostname);
     this.provider.setOptions(this.options);
@@ -42,6 +51,17 @@ export class GalleryPage {
         this.nav.present(alert);
       }
     );
+  }
+
+  onPageWillEnter() {
+    console.log("Current nav stack:");
+    for (let index = 0; index < this.nav.length(); index += 1) {
+      let view = this.nav.getByIndex(index);
+      console.log({
+        page: view.instance.constructor,
+        options: view.instance.collectState(),
+      });
+    }
   }
 
   onImageClick(post: Post) {
