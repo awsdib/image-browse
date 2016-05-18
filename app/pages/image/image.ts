@@ -14,6 +14,7 @@ export class ImagePage {
   swiperOptions: any;
   swiper: any;
   options: any;
+  index: number;
 
   constructor(private nav: NavController, navParams: NavParams) {
     this.hostname = navParams.get('hostname');
@@ -21,17 +22,25 @@ export class ImagePage {
 
     // Add extra data to posts to use in the image view.
     let basePosts = navParams.get('posts');
+    console.log("base posts:");
+    console.log(basePosts);
     for (let post of basePosts) {
       this.posts.push(new ImagePost(post));
     }
 
-    let index = navParams.get('index');
+    console.log("posts:");
+    console.log(this.posts);
+
+    this.index = navParams.get('index');
+    console.log(`index: ${this.index}`);
 
     // Load image for first post.
-    let post = this.posts[index];
+    let post = this.posts[this.index];
+    console.log("post:");
+    console.log(post);
     post.load();
 
-    let activeIndex = this.overrideIndex(index);
+    let activeIndex = this.overrideIndex(this.index);
 
     this.swiperOptions = {
       initialSlide: activeIndex,
@@ -45,14 +54,13 @@ export class ImagePage {
     return {
       hostname: this.hostname,
       posts: this.posts,
-      activePosts: this.posts,
       options: this.options,
     };
   }
 
   onSlideChange($event) {
-    let index = $event.activeIndex;
-    let post = this.activePosts[index];
+    this.index = $event.activeIndex;
+    let post = this.activePosts[this.index];
     let activeIndex = this.overrideIndex(post.index);
 
     // Force Swiper to go to the newly active slide.

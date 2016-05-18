@@ -1,26 +1,33 @@
 import {Alert, Modal, NavController, NavParams, Page} from 'ionic-angular';
 import {ImagePage} from '../image/image';
-import {GelbooruService, Options} from '../../backends/gelbooru-service';
+import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
 
 @Page({
   templateUrl: 'build/pages/gallery/gallery.html',
-  providers: [GelbooruService],
+  providers: [LookupService],
 })
 export class GalleryPage {
   hostname: string;
   options: Options;
-  posts: Post[];
+  posts: Post[] = [];
   rows: Post[][];
   more: boolean = true;
+  provider: Provider;
 
   constructor(
     private nav: NavController,
-    private provider: GelbooruService,
+    private lookup: LookupService,
     navParams: NavParams
   ) {
     this.hostname = navParams.get('hostname');
     this.options = navParams.get('options');
+
+    this.provider = this.lookup.getProvider(this.hostname, this.options);
+    if (this.provider == null)
+    {
+      // TODO: Handle unsupported website.
+    }
   }
 
   collectState() {
@@ -33,10 +40,9 @@ export class GalleryPage {
   }
 
   onPageLoaded() {
-    this.provider.setHostname(this.hostname);
-    this.provider.setOptions(this.options);
     this.provider.getPosts(
-      (posts, more) => {
+      this.posts.length,
+      (posts: Post[], more: boolean) => {
         this.posts = posts;
         this.rebuildGrid();
         this.more = more;
@@ -53,16 +59,16 @@ export class GalleryPage {
     );
   }
 
-  onPageWillEnter() {
-    console.log("Current nav stack:");
-    for (let index = 0; index < this.nav.length(); index += 1) {
-      let view = this.nav.getByIndex(index);
-      console.log({
-        page: view.instance.constructor,
-        options: view.instance.collectState(),
-      });
-    }
-  }
+  // onPageWillEnter() {
+  //   console.log("Current nav stack:");
+  //   for (let index = 0; index < this.nav.length(); index += 1) {
+  //     let view = this.nav.getByIndex(index);
+  //     console.log({
+  //       page: view.instance.constructor,
+  //       options: view.instance.collectState(),
+  //     });
+  //   }
+  // }
 
   onImageClick(post: Post) {
     this.nav.push(ImagePage, {
@@ -83,6 +89,7 @@ export class GalleryPage {
 
   onInfinite($event: any) {
     this.provider.getPosts(
+      this.posts.length,
       (posts, more) => {
         Array.prototype.push.apply(this.posts, posts);
         console.log(`total posts: ${this.posts.length}`);

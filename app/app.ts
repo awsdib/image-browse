@@ -41,15 +41,6 @@ export class MyApp {
           page: "GalleryPage",
           data: {
             hostname: "safebooru.org",
-            posts: [{
-              display: "http://safebooru.org/samples/1639/sample_de35f0d63b52aa43987736644de8965427b68747.jpg",
-              image: "http://safebooru.org/images/1639/de35f0d63b52aa43987736644de8965427b68747.jpg",
-              index: 0,
-              loaded: true,
-              sample: "http://safebooru.org/samples/1639/sample_de35f0d63b52aa43987736644de8965427b68747.jpg",
-              tags: [],
-              thumbnail: "http://safebooru.org/thumbnails/1639/thumbnail_de35f0d63b52aa43987736644de8965427b68747.jpg",
-            }],
             options: {},
           },
         },
@@ -63,19 +54,11 @@ export class MyApp {
               index: 0,
               loaded: true,
               sample: "http://safebooru.org/samples/1639/sample_de35f0d63b52aa43987736644de8965427b68747.jpg",
-              tags: [],
+              tags: ["butts", "other_butts"],
               thumbnail: "http://safebooru.org/thumbnails/1639/thumbnail_de35f0d63b52aa43987736644de8965427b68747.jpg",
             }],
             options: {},
-            activePosts: [{
-              display: "http://safebooru.org/samples/1639/sample_de35f0d63b52aa43987736644de8965427b68747.jpg",
-              image: "http://safebooru.org/images/1639/de35f0d63b52aa43987736644de8965427b68747.jpg",
-              index: 0,
-              loaded: true,
-              sample: "http://safebooru.org/samples/1639/sample_de35f0d63b52aa43987736644de8965427b68747.jpg",
-              tags: [],
-              thumbnail: "http://safebooru.org/thumbnails/1639/thumbnail_de35f0d63b52aa43987736644de8965427b68747.jpg",
-            }],
+            index: 0,
           },
         }
       ];
@@ -99,7 +82,7 @@ export class MyApp {
           params: params,
         };
       });
-      nav.setPages(restorePages);
+      // nav.setPages(restorePages);
     });
   }
 }

@@ -1,6 +1,6 @@
 import {Modal, NavController, NavParams, Page, ViewController} from 'ionic-angular';
 import * as gallery from '../gallery/gallery';
-import {Options} from '../../backends/gelbooru-service';
+import {Options} from '../../backends/lookup-service';
 
 @Page({
   templateUrl: 'build/pages/search-modal/search-modal.html',

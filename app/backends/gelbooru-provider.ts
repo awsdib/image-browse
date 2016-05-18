@@ -1,48 +1,23 @@
 import {Platform} from 'ionic-angular';
-import {Injectable} from 'angular2/core';
 import {Http} from 'angular2/http';
 import {Post} from '../pages/gallery/gallery';
 import {SAFEBOORU_MOCK} from './mock-data/safebooru';
 import {RULE34_MOCK} from './mock-data/rule34';
 import * as URI from 'urijs';
 import {Parser} from 'xml2js';
-
-export interface Provider {
-  setHostname(hostname: string);
-
-  setOptions(options: Options);
-
-  getPosts(
-    successCallback: (posts: Post[], more: boolean) => void,
-    errorCallback: (message: string) => void
-  );
-}
-
-export interface Options {
-  tags?: string[],
-  excludeTags?: string[],
-}
+import {Options, Provider} from './lookup-service';
 
 const POSTS_PER_PAGE: number = 100;
 
-@Injectable()
-export class GelbooruService implements Provider {
+export class GelbooruProvider implements Provider {
   hostname: string;
   options: Options;
-  page: number = 0;
   posts: Post[] = [];
 
   constructor(private platform: Platform, private http: Http) {}
 
-  setHostname(hostname: string) {
-    this.hostname = hostname;
-  }
-
-  setOptions(options: Options) {
-    this.options = options;
-  }
-
   getPosts(
+    offset: number,
     successCallback: (posts: Post[], more: boolean) => void,
     errorCallback: (message: string) => void
   ) {
@@ -53,7 +28,7 @@ export class GelbooruService implements Provider {
     }
 
     // Always build the request url, even on desktop, so we can debug the result.
-    let requestUrl = this.buildRequestUrl();
+    let requestUrl = this.buildRequestUrl(offset);
 
     if (this.platform.is('core')) {
       // For desktop testing use sample data. Use setTimeout() to simulate network delay (and not
@@ -63,7 +38,8 @@ export class GelbooruService implements Provider {
         this.processResponse(
           response,
           successCallback,
-          errorCallback);
+          errorCallback,
+          offset);
       }, 500);
     } else {
       // Make a web request to the server to get the posts list.
@@ -73,7 +49,8 @@ export class GelbooruService implements Provider {
             this.processResponse(
               response.text(),
               successCallback,
-              errorCallback);
+              errorCallback,
+              offset);
           },
           error => {
             errorCallback(error.toString());
@@ -82,7 +59,7 @@ export class GelbooruService implements Provider {
     }
   }
 
-  buildRequestUrl(): string {
+  buildRequestUrl(offset: number): string {
     let requestUrl = URI({
       protocol: 'http',
       hostname: this.hostname,
@@ -90,8 +67,10 @@ export class GelbooruService implements Provider {
       query: 'page=dapi&s=post&q=index',
     });
 
+    let page = Math.round(offset / POSTS_PER_PAGE);
+
     // Add the page number.
-    requestUrl.addQuery({ 'pid': this.page });
+    requestUrl.addQuery({ 'pid': page });
 
     // Add the number of posts per page. At the time of writing this defaults to 100 but we include
     // it in the URL query in case this varies between sites.
@@ -119,7 +98,8 @@ export class GelbooruService implements Provider {
   processResponse(
     response: string,
     successCallback: (posts: Post[], more: boolean) => void,
-    errorCallback: (message: string) => void
+    errorCallback: (message: string) => void,
+    offset: number
   ) {
     // Parse the XML response.
     let parser = new Parser({
@@ -141,7 +121,7 @@ export class GelbooruService implements Provider {
       let siteConfig = SITE_CONFIGS[this.hostname];
 
       let results = [];
-      let counter = this.page * POSTS_PER_PAGE;
+      let counter = offset;
       let responsePosts = parsedData.post;
 
       // If running in a desktop browser the response string is going to be a
@@ -177,9 +157,6 @@ export class GelbooruService implements Provider {
 
         counter += 1;
       }
-
-      // Increment the page count on a successful result.
-      this.page += 1;
 
       // Add loaded posts to the cached list of posts.
       Array.prototype.push.apply(this.posts, results);
