@@ -1,5 +1,5 @@
 import {Platform} from 'ionic-angular';
-import {Http} from 'angular2/http';
+import {Http} from '@angular/http';
 import {Post} from '../pages/gallery/gallery';
 import {SAFEBOORU_MOCK} from './mock-data/safebooru';
 import {RULE34_MOCK} from './mock-data/rule34';
@@ -166,6 +166,21 @@ export class GelbooruProvider implements Provider {
 
       successCallback(results, more);
     });
+  }
+
+  serialize(): any {
+    return {
+      provider: 'GelbooruService',
+      hostname: this.hostname,
+      options: this.options,
+      posts: this.posts,
+    };
+  }
+
+  deserialize(data: any) {
+    this.hostname = data.hostname;
+    this.options = data.options;
+    this.posts = data.posts;
   }
 }
 

@@ -35,7 +35,6 @@ export class GalleryPage {
       hostname: this.hostname,
       options: this.options,
       posts: this.posts,
-      more: this.more, // TODO: Do we want to save this or should we have to check again on startup?
     };
   }
 
@@ -105,6 +104,14 @@ export class GalleryPage {
   }
 
   rebuildGrid() {
+    // HACK: We need the style to be 'url(...)' and that doesn't seem to work with Angular's style
+    // bindings, so we have to build the string from code and just set it in the template.
+    for (let post of this.posts) {
+      (<any>post).style = {
+        'background-image': `url(${post.thumbnail})`,
+      };
+    }
+
     // Break posts into rows so that they can be displayed in a grid.
     const POSTS_PER_ROW = 3;
     this.rows = [];

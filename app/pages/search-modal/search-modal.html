@@ -6,7 +6,7 @@
 
   <h2>Search Tags</h2>
   <ion-list>
-    <ion-item *ngFor="#tag of editTags">
+    <ion-item *ngFor="let tag of editTags">
       <ion-input [(ngModel)]="tag.text"></ion-input>
       <button clear item-right (click)="onRemoveTag(tag)"><ion-icon name="remove-circle"></ion-icon></button>
     </ion-item>
@@ -15,7 +15,7 @@
 
   <h2>Exclude Tags</h2>
   <ion-list>
-    <ion-item *ngFor="#tag of editExcludeTags">
+    <ion-item *ngFor="let tag of editExcludeTags">
       <ion-input [(ngModel)]="tag.text"></ion-input>
       <button clear item-right (click)="onRemoveExcludeTag(tag)"><ion-icon name="remove-circle"></ion-icon></button>
     </ion-item>

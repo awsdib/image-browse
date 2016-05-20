@@ -1,6 +1,6 @@
 import {Platform} from 'ionic-angular';
-import {Http} from 'angular2/http';
-import {Injectable} from 'angular2/core';
+import {Http} from '@angular/http';
+import {Injectable} from '@angular/core';
 import {Post} from '../pages/gallery/gallery';
 import {GelbooruProvider} from './gelbooru-provider';
 
@@ -12,6 +12,9 @@ export interface Provider {
     offset: number,
     successCallback: (posts: Post[], more: boolean) => void,
     errorCallback: (message: string) => void);
+
+  serialize(): any;
+  deserialize(data: any);
 }
 
 // TODO: Make this into a class.

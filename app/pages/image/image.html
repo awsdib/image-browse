@@ -6,11 +6,11 @@
 
 <ion-content>
   <ion-slides [options]="swiperOptions" (change)="onSlideChange($event)">
-    <ion-slide *ngFor="#post of activePosts">
+    <ion-slide *ngFor="let post of activePosts">
       <scroll-content>
         <img src="{{post.display}}">
         <ion-list>
-          <ion-item *ngFor="#tag of post.tags">
+          <ion-item *ngFor="let tag of post.tags">
             <button clear (click)="onTagClick(tag)">{{tag}}</button>
             <button clear item-right (click)="onAddTagClick(tag)"><ion-icon name="add-circle"></ion-icon></button>
             <button clear item-right (click)="onRemoveTagClick(tag)"><ion-icon name="remove-circle"></ion-icon></button>

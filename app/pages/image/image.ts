@@ -22,22 +22,14 @@ export class ImagePage {
 
     // Add extra data to posts to use in the image view.
     let basePosts = navParams.get('posts');
-    console.log("base posts:");
-    console.log(basePosts);
     for (let post of basePosts) {
       this.posts.push(new ImagePost(post));
     }
 
-    console.log("posts:");
-    console.log(this.posts);
-
     this.index = navParams.get('index');
-    console.log(`index: ${this.index}`);
 
     // Load image for first post.
     let post = this.posts[this.index];
-    console.log("post:");
-    console.log(post);
     post.load();
 
     let activeIndex = this.overrideIndex(this.index);
