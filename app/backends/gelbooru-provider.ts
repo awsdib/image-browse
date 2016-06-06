@@ -170,7 +170,7 @@ export class GelbooruProvider implements Provider {
 
   serialize(): any {
     return {
-      provider: 'GelbooruService',
+      provider: 'GelbooruProvider',
       hostname: this.hostname,
       options: this.options,
       posts: this.posts,

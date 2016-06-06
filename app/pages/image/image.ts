@@ -45,8 +45,8 @@ export class ImagePage {
   collectState() {
     return {
       hostname: this.hostname,
-      posts: this.posts,
       options: this.options,
+      index: this.index,
     };
   }
 

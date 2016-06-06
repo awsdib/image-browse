@@ -2,10 +2,11 @@ import {Alert, Modal, NavController, NavParams, Page} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
+import {SaveRestoreService} from '../../save-restore-service';
 
 @Page({
   templateUrl: 'build/pages/gallery/gallery.html',
-  providers: [LookupService],
+  // providers: [SaveRestoreService],
 })
 export class GalleryPage {
   hostname: string;
@@ -18,6 +19,7 @@ export class GalleryPage {
   constructor(
     private nav: NavController,
     private lookup: LookupService,
+    // private saveRestoreService: SaveRestoreService,
     navParams: NavParams
   ) {
     this.hostname = navParams.get('hostname');
@@ -34,7 +36,6 @@ export class GalleryPage {
     return {
       hostname: this.hostname,
       options: this.options,
-      posts: this.posts,
     };
   }
 
@@ -58,16 +59,9 @@ export class GalleryPage {
     );
   }
 
-  // onPageWillEnter() {
-  //   console.log("Current nav stack:");
-  //   for (let index = 0; index < this.nav.length(); index += 1) {
-  //     let view = this.nav.getByIndex(index);
-  //     console.log({
-  //       page: view.instance.constructor,
-  //       options: view.instance.collectState(),
-  //     });
-  //   }
-  // }
+  onPageWillEnter() {
+    // this.saveRestoreService.saveNavState(this.nav);
+  }
 
   onImageClick(post: Post) {
     this.nav.push(ImagePage, {
