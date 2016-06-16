@@ -13,6 +13,8 @@ export interface Provider {
         successCallback: (posts: Post[], more: boolean) => void,
         errorCallback: (message: string) => void);
 
+    allPosts(): Post[];
+
     serialize(): any;
     deserialize(data: any);
 }
@@ -45,10 +47,7 @@ export class LookupService {
         switch (hostname) {
             case 'rule34.xxx':
             case 'safebooru.org':
-                console.log('creating new GelbooruProvider');
-                let provider = new GelbooruProvider(this.platform, this.http);
-                provider.hostname = hostname;
-                provider.options = options;
+                let provider = new GelbooruProvider(hostname, options, this.platform, this.http);
                 this.providers.push(provider);
                 return provider;
             default:
@@ -65,11 +64,16 @@ export class LookupService {
     }
 
     restoreProviders(dataList: any[]) {
+        console.log(`restoring providers:`);
+        console.log(dataList);
+
         this.providers = [];
         for (let data of dataList) {
             switch (data.provider) {
                 case 'GelbooruProvider':
-                    // TODO: Instantiate provider.
+                    let provider = new GelbooruProvider(data.hostname, data.options, this.platform, this.http);
+                    provider.deserialize(data);
+                    this.providers.push(provider);
                     break;
             }
         }

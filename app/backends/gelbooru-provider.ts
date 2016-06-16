@@ -10,11 +10,19 @@ import {Options, Provider} from './lookup-service';
 const POSTS_PER_PAGE: number = 100;
 
 export class GelbooruProvider implements Provider {
-  hostname: string;
-  options: Options;
-  posts: Post[] = [];
+    hostname: string;
+    options: Options;
+    posts: Post[] = [];
 
-  constructor(private platform: Platform, private http: Http) {}
+    constructor(
+        hostname: string,
+        options: Options,
+        private platform: Platform,
+        private http: Http
+    ) {
+        this.hostname = hostname;
+        this.options = options;
+    }
 
   getPosts(
     offset: number,
@@ -58,6 +66,10 @@ export class GelbooruProvider implements Provider {
         );
     }
   }
+
+    allPosts(): Post[] {
+        return this.posts; // TODO: Should this be cloned?
+    }
 
   buildRequestUrl(offset: number): string {
     let requestUrl = URI({

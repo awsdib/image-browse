@@ -1,5 +1,6 @@
 import {NavController, NavParams, Page} from 'ionic-angular';
 import {GalleryPage, Post} from '../gallery/gallery';
+import {LookupService, Options, Provider} from '../../backends/lookup-service';
 
 const ACTIVE_SLIDES = 7;
 const MIDDLE_INDEX = 3;
@@ -8,47 +9,58 @@ const MIDDLE_INDEX = 3;
   templateUrl: 'build/pages/image/image.html'
 })
 export class ImagePage {
-  hostname: string;
-  posts: ImagePost[] = [];
-  activePosts: ImagePost[];
-  swiperOptions: any;
-  swiper: any;
-  options: any;
-  index: number;
+    hostname: string;
+    posts: ImagePost[] = [];
+    activePosts: ImagePost[];
+    swiperOptions: any;
+    swiper: any;
+    options: Options;
+    provider: Provider;
+    index: number;
 
-  constructor(private nav: NavController, navParams: NavParams) {
-    this.hostname = navParams.get('hostname');
-    this.options = navParams.get('options');
+    constructor(
+        private nav: NavController,
+        private lookup: LookupService,
+        navParams: NavParams
+    ) {
+        this.hostname = navParams.get('hostname');
+        this.options = navParams.get('options');
+        console.log(`ImagePage: ${this.hostname} ${this.options}`);
 
-    // Add extra data to posts to use in the image view.
-    let basePosts = navParams.get('posts');
-    for (let post of basePosts) {
-      this.posts.push(new ImagePost(post));
+        this.provider = this.lookup.getProvider(this.hostname, this.options);
+
+        // Add extra data to posts to use in the image view.
+        let basePosts = this.provider.allPosts();
+        console.log(`loaded posts:`);
+        console.log(basePosts);
+
+        for (let post of basePosts) {
+            this.posts.push(new ImagePost(post));
+        }
+
+        this.index = navParams.get('index');
+
+        // Load image for first post.
+        let post = this.posts[this.index];
+        post.load();
+
+        let activeIndex = this.overrideIndex(this.index);
+
+        this.swiperOptions = {
+            initialSlide: activeIndex,
+            longSwipesRatio: 0.2,
+
+            onInit: (swiper) => { this.swiper = swiper; },
+        };
     }
 
-    this.index = navParams.get('index');
-
-    // Load image for first post.
-    let post = this.posts[this.index];
-    post.load();
-
-    let activeIndex = this.overrideIndex(this.index);
-
-    this.swiperOptions = {
-      initialSlide: activeIndex,
-      longSwipesRatio: 0.2,
-
-      onInit: (swiper) => { this.swiper = swiper; },
-    };
-  }
-
-  collectState() {
-    return {
-      hostname: this.hostname,
-      options: this.options,
-      index: this.index,
-    };
-  }
+    collectState() {
+        return {
+            hostname: this.hostname,
+            options: this.options,
+            index: this.index,
+        };
+    }
 
   onSlideChange($event) {
     this.index = $event.activeIndex;

@@ -2,35 +2,37 @@ import {Alert, Modal, NavController, NavParams, Page} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
-import {SaveRestoreService} from '../../save-restore-service';
+import {saveNavState} from '../../save-restore';
 
 @Page({
   templateUrl: 'build/pages/gallery/gallery.html',
-  // providers: [SaveRestoreService],
 })
 export class GalleryPage {
-  hostname: string;
-  options: Options;
-  posts: Post[] = [];
-  rows: Post[][];
-  more: boolean = true;
-  provider: Provider;
+    hostname: string;
+    options: Options;
+    posts: Post[] = [];
+    rows: Post[][];
+    more: boolean = true;
+    provider: Provider;
 
-  constructor(
-    private nav: NavController,
-    private lookup: LookupService,
-    // private saveRestoreService: SaveRestoreService,
-    navParams: NavParams
-  ) {
-    this.hostname = navParams.get('hostname');
-    this.options = navParams.get('options');
+    constructor(
+        private nav: NavController,
+        private lookup: LookupService,
+        navParams: NavParams
+    ) {
+        this.hostname = navParams.get('hostname');
+        this.options = navParams.get('options');
 
-    this.provider = this.lookup.getProvider(this.hostname, this.options);
-    if (this.provider == null)
-    {
-      // TODO: Handle unsupported website.
+        this.provider = this.lookup.getProvider(this.hostname, this.options);
+
+        if (navParams.get('restore')) {
+            // Restore page from previous session.
+            console.log('restoring gallery page');
+        } else {
+            // Initialize new page.
+            console.log('initializing gallery page');
+        }
     }
-  }
 
   collectState() {
     return {
@@ -59,9 +61,9 @@ export class GalleryPage {
     );
   }
 
-  onPageWillEnter() {
-    // this.saveRestoreService.saveNavState(this.nav);
-  }
+    onPageWillEnter() {
+        saveNavState(this.nav, this.lookup);
+    }
 
   onImageClick(post: Post) {
     this.nav.push(ImagePage, {
