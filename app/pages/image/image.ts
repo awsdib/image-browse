@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {GalleryPage, Post} from '../gallery/gallery';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
+import {saveNavState} from '../../save-restore';
 
 const ACTIVE_SLIDES = 7;
 const MIDDLE_INDEX = 3;
@@ -53,6 +54,10 @@ export class ImagePage {
 
             onInit: (swiper) => { this.swiper = swiper; },
         };
+    }
+
+    ionViewWillEnter() {
+        saveNavState(this.nav, this.lookup);
     }
 
     collectState() {
