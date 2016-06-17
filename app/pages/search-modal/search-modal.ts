@@ -1,8 +1,9 @@
-import {Modal, NavController, NavParams, Page, ViewController} from 'ionic-angular';
+import {Component} from '@angular/core';
+import {Modal, NavController, NavParams, ViewController} from 'ionic-angular';
 import * as gallery from '../gallery/gallery';
 import {Options} from '../../backends/lookup-service';
 
-@Page({
+@Component({
   templateUrl: 'build/pages/search-modal/search-modal.html',
 })
 export class SearchModal {

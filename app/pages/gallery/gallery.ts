@@ -1,10 +1,11 @@
-import {Alert, Modal, NavController, NavParams, Page} from 'ionic-angular';
+import {Component} from '@angular/core';
+import {Alert, Modal, NavController, NavParams} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
 import {saveNavState} from '../../save-restore';
 
-@Page({
+@Component({
   templateUrl: 'build/pages/gallery/gallery.html',
 })
 export class GalleryPage {
@@ -41,7 +42,7 @@ export class GalleryPage {
     };
   }
 
-  onPageLoaded() {
+  ionViewLoaded() {
     this.provider.getPosts(
       this.posts.length,
       (posts: Post[], more: boolean) => {
@@ -61,7 +62,7 @@ export class GalleryPage {
     );
   }
 
-    onPageWillEnter() {
+    ionViewWillEnter() {
         saveNavState(this.nav, this.lookup);
     }
 

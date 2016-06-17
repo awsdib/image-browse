@@ -16,7 +16,7 @@
     </ion-row>
   </ion-grid>
 
-  <ion-infinite-scroll (infinite)="onInfinite($event)" *ngIf="more">
+  <ion-infinite-scroll (ionInfinite)="onInfinite($event)" *ngIf="more">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
  </ion-infinite-scroll>
 </ion-content>

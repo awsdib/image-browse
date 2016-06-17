@@ -1,11 +1,12 @@
-import {NavController, NavParams, Page} from 'ionic-angular';
+import {Component} from '@angular/core';
+import {NavController, NavParams} from 'ionic-angular';
 import {GalleryPage, Post} from '../gallery/gallery';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 
 const ACTIVE_SLIDES = 7;
 const MIDDLE_INDEX = 3;
 
-@Page({
+@Component({
   templateUrl: 'build/pages/image/image.html'
 })
 export class ImagePage {

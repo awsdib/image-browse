@@ -1,19 +1,18 @@
-import {IonicApp, App, NavController, Platform, Storage, SqlStorage} from 'ionic-angular';
+import {Component} from '@angular/core';
+import {ionicBootstrap, App, NavController, Platform, Storage, SqlStorage} from 'ionic-angular';
 import {HomePage} from './pages/home/home';
 import {GalleryPage} from './pages/gallery/gallery';
 import {ImagePage} from './pages/image/image';
 import {LookupService} from './backends/lookup-service';
 
-@App({
+@Component({
     template: '<ion-nav [root]="rootPage"></ion-nav>',
-    config: {}, // http://ionicframework.com/docs/v2/api/config/Config/
-    providers: [LookupService],
 })
 export class MyApp {
     rootPage: any = HomePage;
     nav: NavController;
 
-    constructor(private app: IonicApp, private platform: Platform, private lookupService: LookupService) {
+    constructor(private app: App, private platform: Platform, private lookupService: LookupService) {
         platform.ready().then(() => {
             this.nav = this.app.getActiveNav();
             console.log(`this.nav: ${this.nav}`);
@@ -61,3 +60,8 @@ export class MyApp {
         });
     }
 }
+
+ionicBootstrap(
+    MyApp, // Root component.
+    [LookupService], // Providers.
+    {}); // Config.
