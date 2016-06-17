@@ -84,6 +84,10 @@ export class GalleryPage {
             });
     }
 
+    onHomeClick() {
+        this.nav.popToRoot();
+    }
+
     onSearchClick() {
         let modal = Modal.create(
             SearchModal,
@@ -92,7 +96,7 @@ export class GalleryPage {
                 options: this.options.clone(),
             });
         this.nav.present(modal);
-  }
+    }
 
     onInfinite($event: any) {
         this.provider.getPosts(
