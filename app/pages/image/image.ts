@@ -7,7 +7,7 @@ const ACTIVE_SLIDES = 7;
 const MIDDLE_INDEX = 3;
 
 @Component({
-  templateUrl: 'build/pages/image/image.html'
+    templateUrl: 'build/pages/image/image.html'
 })
 export class ImagePage {
     hostname: string;
@@ -63,105 +63,107 @@ export class ImagePage {
         };
     }
 
-  onSlideChange($event) {
-    this.index = $event.activeIndex;
-    let post = this.activePosts[this.index];
-    let activeIndex = this.overrideIndex(post.index);
+    onSlideChange($event) {
+        this.index = $event.activeIndex;
+        let post = this.activePosts[this.index];
+        let activeIndex = this.overrideIndex(post.index);
 
-    // Force Swiper to go to the newly active slide.
-    this.swiper.activeIndex = activeIndex;
-    this.swiper.update(true);
+        // Force Swiper to go to the newly active slide.
+        this.swiper.activeIndex = activeIndex;
+        this.swiper.update(true);
 
-    post.load();
-  }
-
-  onTagClick(tag: string) {
-    let options = this.options.clone();
-    options.tags = [tag];
-
-    this.nav.push(GalleryPage, {
-      hostname: this.hostname,
-      options: options,
-    });
-  }
-
-  onAddTagClick(tag: string) {
-    let options = this.options.clone();
-    if (!options.tags) {
-      options.tags = [];
+        post.load();
     }
-    options.tags.push(tag);
 
-    this.nav.push(GalleryPage, {
-      hostname: this.hostname,
-      options: options,
-    });
-  }
+    onTagClick(tag: string) {
+        let options = this.options.clone();
+        options.tags = [tag];
 
-  onRemoveTagClick(tag: string) {
-    let options = this.options.clone();
-    if (!options.excludeTags) {
-      options.excludeTags = [];
+        this.nav.push(GalleryPage, {
+            hostname: this.hostname,
+            options: options,
+        });
     }
-    options.excludeTags.push(tag);
 
-    this.nav.push(GalleryPage, {
-      hostname: this.hostname,
-      options: options,
-    });
+    onAddTagClick(tag: string) {
+        let options = this.options.clone();
+        if (!options.tags) {
+            options.tags = [];
+        }
+        options.tags.push(tag);
+
+        this.nav.push(
+            GalleryPage,
+            {
+                hostname: this.hostname,
+                options: options,
+            });
   }
 
-  overrideIndex(index: number): number {
-    let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
-    let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);
-    let activeIndex = index - startIndex;
+    onRemoveTagClick(tag: string) {
+        let options = this.options.clone();
+        if (!options.excludeTags) {
+            options.excludeTags = [];
+        }
+        options.excludeTags.push(tag);
 
-    this.activePosts = this.posts.slice(startIndex, endIndex);
-    return activeIndex;
-  }
+        this.nav.push(GalleryPage, {
+            hostname: this.hostname,
+            options: options,
+        });
+    }
+
+    overrideIndex(index: number): number {
+        let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
+        let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);
+        let activeIndex = index - startIndex;
+
+        this.activePosts = this.posts.slice(startIndex, endIndex);
+        return activeIndex;
+    }
 }
 
 /// Extends the base Post with extra functionality used for the image view.
 class ImagePost implements Post {
-  image: string;
-  thumbnail: string;
-  sample: string;
-  tags: string[];
-  index: number;
-  display: string;
-  loaded: boolean;
+    image: string;
+    thumbnail: string;
+    sample: string;
+    tags: string[];
+    index: number;
+    display: string;
+    loaded: boolean;
 
-  constructor(base: Post) {
-    this.image = base.image;
-    this.thumbnail = base.thumbnail;
-    this.sample = base.sample;
-    this.tags = base.tags;
-    this.index = base.index;
-    this.display = this.thumbnail;
-    this.loaded = false;
-  }
-
-  /// Loads the full resolution image for the post.
-  ///
-  /// Posts start with their display image set the thumbail so that the browser doesn't try to load
-  /// dozens of high resolution images at once. Once an image is selected to be viewed it starts
-  /// loading the full image in the background and once that image is cached by the browser it sets
-  /// it to be the display image.
-  load() {
-    if (this.loaded) {
-      // Post has already been loaded, don't try to load it again.
-      return;
+    constructor(base: Post) {
+        this.image = base.image;
+        this.thumbnail = base.thumbnail;
+        this.sample = base.sample;
+        this.tags = base.tags;
+        this.index = base.index;
+        this.display = this.thumbnail;
+        this.loaded = false;
     }
 
-    let image = new Image();
-    image.onload = () => {
-      this.display = this.sample;
-      this.loaded = true;
+    /// Loads the full resolution image for the post.
+    ///
+    /// Posts start with their display image set the thumbail so that the browser doesn't try to load
+    /// dozens of high resolution images at once. Once an image is selected to be viewed it starts
+    /// loading the full image in the background and once that image is cached by the browser it sets
+    /// it to be the display image.
+    load() {
+        if (this.loaded) {
+            // Post has already been loaded, don't try to load it again.
+            return;
+        }
+
+        let image = new Image();
+        image.onload = () => {
+            this.display = this.sample;
+            this.loaded = true;
+        };
+        image.src = this.sample;
     };
-    image.src = this.sample;
-  };
 }
 
 function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
+    return Math.min(Math.max(value, min), max);
 };

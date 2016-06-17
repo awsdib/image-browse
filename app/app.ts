@@ -16,7 +16,7 @@ export class MyApp {
         platform.ready().then(() => {
             this.nav = this.app.getActiveNav();
             console.log(`this.nav: ${this.nav}`);
-            this.tryRestoreState();
+            // this.tryRestoreState();
         });
     }
 
