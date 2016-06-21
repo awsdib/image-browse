@@ -29,16 +29,13 @@ export interface Options {
 export class LookupService {
     providers: Provider[] = [];
 
-    constructor(private platform: Platform, private http: Http) {
-        console.log('constructing new lookup service');
-    }
+    constructor(private platform: Platform, private http: Http) {}
 
     getProvider(hostname: string, options: Options): Provider {
         for (let provider of this.providers) {
 
             // TODO: Do more intelligent comparison of options objects.
             if (provider.hostname == hostname && JSON.stringify(provider.options) == JSON.stringify(options)) {
-                console.log('reusing existing provider');
                 return provider;
             }
         }
@@ -64,9 +61,6 @@ export class LookupService {
     }
 
     restoreProviders(dataList: any[]) {
-        console.log(`restoring providers:`);
-        console.log(dataList);
-
         this.providers = [];
         for (let data of dataList) {
             switch (data.provider) {

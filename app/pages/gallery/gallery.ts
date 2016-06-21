@@ -3,7 +3,6 @@ import {Alert, Modal, NavController, NavParams} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
-import {saveNavState} from '../../save-restore';
 
 export interface Post {
     image: string,
@@ -67,10 +66,6 @@ export class GalleryPage {
                 this.nav.pop();
                 this.nav.present(alert);
             });
-    }
-
-    ionViewWillEnter() {
-        saveNavState(this.nav, this.lookup);
     }
 
     onImageClick(post: Post) {

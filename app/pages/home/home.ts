@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController, Storage, SqlStorage} from 'ionic-angular';
 import {GalleryPage} from '../gallery/gallery';
-import {saveNavState} from '../../save-restore';
+import {saveNavState, resetSavedState, tryRestoreState} from '../../save-restore';
 import {LookupService} from '../../backends/lookup-service';
+import {ImagePage} from '../../pages/image/image';
 
 @Component({
     templateUrl: 'build/pages/home/home.html'
@@ -12,7 +13,7 @@ export class HomePage {
 
     constructor(
         private nav: NavController,
-        private lookup: LookupService
+        private lookupService: LookupService
     ) {
     }
 
@@ -24,8 +25,23 @@ export class HomePage {
         });
     }
 
-    ionViewWillEnter() {
-        saveNavState(this.nav, this.lookup);
+    ionViewLoaded() {
+        tryRestoreState(
+            this.nav,
+            this.lookupService,
+            (stateWasRestored) => {
+                this.nav.viewDidEnter.subscribe(
+                    (view) => {
+                        console.log('view did enter:', view);
+                        saveNavState(this.nav, this.lookupService);
+                    },
+                    (param) => { console.log(`view pushed error:`, param); },
+                    (param) => { console.log(`view pushed complete:`, param); });
+            });
+    }
+
+    ionViewDidEnter() {
+        resetSavedState();
     }
 
     collectState() : any {

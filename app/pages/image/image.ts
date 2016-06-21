@@ -27,14 +27,11 @@ export class ImagePage {
     ) {
         this.hostname = navParams.get('hostname');
         this.options = navParams.get('options');
-        console.log(`ImagePage: ${this.hostname} ${this.options}`);
 
         this.provider = this.lookup.getProvider(this.hostname, this.options);
 
         // Add extra data to posts to use in the image view.
         let basePosts = this.provider.allPosts();
-        console.log(`loaded posts:`);
-        console.log(basePosts);
 
         for (let post of basePosts) {
             this.posts.push(new ImagePost(post));
@@ -54,10 +51,6 @@ export class ImagePage {
 
             onInit: (swiper) => { this.swiper = swiper; },
         };
-    }
-
-    ionViewWillEnter() {
-        saveNavState(this.nav, this.lookup);
     }
 
     collectState() {
