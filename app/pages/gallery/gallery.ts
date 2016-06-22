@@ -9,7 +9,7 @@ export interface Post {
     thumbnail: string,
     sample: string,
     tags: Array<string>,
-    index: number,
+    id: number,
 }
 
 @Component({
@@ -34,11 +34,9 @@ export class GalleryPage {
         this.provider = this.lookup.getProvider(this.hostname, this.options);
 
         if (navParams.get('restore')) {
-            // Restore page from previous session.
-            console.log('restoring gallery page');
+            // TODO: Restore page from previous session.
         } else {
-            // Initialize new page.
-            console.log('initializing gallery page');
+            // TODO: Initialize new page.
         }
     }
 
@@ -74,7 +72,7 @@ export class GalleryPage {
             {
                 hostname: this.hostname,
                 posts: this.posts,
-                index: post.index,
+                id: post.id,
                 options: this.options.clone(),
             });
     }

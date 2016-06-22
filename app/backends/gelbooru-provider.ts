@@ -164,7 +164,7 @@ export class GelbooruProvider implements Provider {
                     sample: sample.toString(),
                     thumbnail: thumbnail.toString(),
                     tags: post.tags.trim().split(' '),
-                    index: counter,
+                    id: post.id,
                 });
 
                 counter += 1;

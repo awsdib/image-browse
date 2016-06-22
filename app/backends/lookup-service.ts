@@ -60,6 +60,10 @@ export class LookupService {
         return result;
     }
 
+    clearProviders() {
+        this.providers = [];
+    }
+
     restoreProviders(dataList: any[]) {
         this.providers = [];
         for (let data of dataList) {

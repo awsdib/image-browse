@@ -5,7 +5,7 @@
 </ion-navbar>
 
 <ion-content>
-  <ion-slides [options]="swiperOptions" (change)="onSlideChange($event)">
+  <ion-slides [options]="swiperOptions" (ionDidChange)="onSlideChange($event)">
     <ion-slide *ngFor="let post of activePosts">
       <scroll-content>
         <img src="{{post.display}}">

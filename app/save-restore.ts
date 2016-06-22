@@ -5,13 +5,16 @@ import {HomePage} from './pages/home/home';
 import {GalleryPage} from './pages/gallery/gallery';
 import {ImagePage} from './pages/image/image';
 
-export interface SaveRestore {
-    serialize(): any;
-    deserialize(any);
-}
+// TODO: I'd like to be able to have SaveRestore be an injectable class so the nav controller and
+// lookup service could be cached. That would make it easier to save the state whenever the apps
+// state changed in a meaningful way. The issue is that, as far as I know, it would have to be a
+// component in order to get injected with the correct nav controller; If we just mark it as
+// @Injectable() then it will either not get the right nav controller or injection will fail
+// altogether.
 
 export function saveNavState(nav: NavController, lookupService: LookupService) {
-    console.groupCollapsed('Current nav stack:')
+    console.groupCollapsed('Saving nav state');
+    console.groupCollapsed('Current nav stack');
     for (let index = 0; index < nav.length(); index += 1) {
         let view = nav.getByIndex(index);
         console.log(`view ${index} is loaded: ${view.isLoaded()}`, view);
@@ -45,6 +48,7 @@ export function saveNavState(nav: NavController, lookupService: LookupService) {
 
     let storage = new Storage(SqlStorage);
     storage.set('navState', dataString);
+    console.groupEnd();
 }
 
 export function tryRestoreState(nav: NavController, lookupService: LookupService, onComplete: (bool) => void) {

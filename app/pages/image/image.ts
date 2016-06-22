@@ -12,23 +12,37 @@ const MIDDLE_INDEX = 3;
 })
 export class ImagePage {
     hostname: string;
-    posts: ImagePost[] = [];
-    activePosts: ImagePost[];
-    swiperOptions: any;
-    swiper: any;
     options: Options;
     provider: Provider;
-    index: number;
+
+    /// Array of all loaded posts in the gallery.
+    posts: ImagePost[] = [];
+
+    /// ID of the currently viewed post.
+    postId: number;
+
+    /// Subset of `posts` actively used by slides.
+    ///
+    /// The gallery may have hundreds or thousands of posts loaded at a time so only a few (less
+    /// than a dozen) are active at a time to improve performance. Each time the user swipes to
+    /// the next image the window of active posts shifts to follow the image the user is viewing.
+    activePosts: ImagePost[];
+
+    /// The currently selected index within `activePosts`.
+    activeIndex: number;
+
+    swiperOptions: any;
+    swiper: any;
 
     constructor(
         private nav: NavController,
-        private lookup: LookupService,
+        private lookupService: LookupService,
         navParams: NavParams
     ) {
         this.hostname = navParams.get('hostname');
         this.options = navParams.get('options');
 
-        this.provider = this.lookup.getProvider(this.hostname, this.options);
+        this.provider = this.lookupService.getProvider(this.hostname, this.options);
 
         // Add extra data to posts to use in the image view.
         let basePosts = this.provider.allPosts();
@@ -37,16 +51,12 @@ export class ImagePage {
             this.posts.push(new ImagePost(post));
         }
 
-        this.index = navParams.get('index');
+        this.postId = navParams.get('id');
 
-        // Load image for first post.
-        let post = this.posts[this.index];
-        post.load();
-
-        let activeIndex = this.overrideIndex(this.index);
+        this.updateActivePosts(this.postId);
 
         this.swiperOptions = {
-            initialSlide: activeIndex,
+            initialSlide: this.activeIndex,
             longSwipesRatio: 0.2,
 
             onInit: (swiper) => { this.swiper = swiper; },
@@ -57,20 +67,20 @@ export class ImagePage {
         return {
             hostname: this.hostname,
             options: this.options,
-            index: this.index,
+            id: this.postId,
         };
     }
 
     onSlideChange($event) {
-        this.index = $event.activeIndex;
-        let post = this.activePosts[this.index];
-        let activeIndex = this.overrideIndex(post.index);
+        let newIndex = $event.activeIndex;
+        let newPost = this.activePosts[newIndex];
 
         // Force Swiper to go to the newly active slide.
-        this.swiper.activeIndex = activeIndex;
+        this.updateActivePosts(newPost.id);
+        this.swiper.activeIndex = this.activeIndex;
         this.swiper.update(true);
 
-        post.load();
+        saveNavState(this.nav, this.lookupService);
     }
 
     onTagClick(tag: string) {
@@ -96,7 +106,7 @@ export class ImagePage {
                 hostname: this.hostname,
                 options: options,
             });
-  }
+    }
 
     onRemoveTagClick(tag: string) {
         let options = this.options.clone();
@@ -111,13 +121,18 @@ export class ImagePage {
         });
     }
 
-    overrideIndex(index: number): number {
+    updateActivePosts(id: number) {
+        let index = this.posts.map(post => post.id).indexOf(id);
+
         let startIndex = clamp(index - MIDDLE_INDEX, 0, this.posts.length);
         let endIndex = clamp(startIndex + ACTIVE_SLIDES, 0, this.posts.length);
-        let activeIndex = index - startIndex;
 
+        this.postId = id;
+        this.activeIndex = index - startIndex;
         this.activePosts = this.posts.slice(startIndex, endIndex);
-        return activeIndex;
+
+        let post = this.posts[index];
+        post.load();
     }
 }
 
@@ -127,7 +142,7 @@ class ImagePost implements Post {
     thumbnail: string;
     sample: string;
     tags: string[];
-    index: number;
+    id: number;
     display: string;
     loaded: boolean;
 
@@ -136,7 +151,7 @@ class ImagePost implements Post {
         this.thumbnail = base.thumbnail;
         this.sample = base.sample;
         this.tags = base.tags;
-        this.index = base.index;
+        this.id = base.id;
         this.display = this.thumbnail;
         this.loaded = false;
     }

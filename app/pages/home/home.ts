@@ -32,15 +32,15 @@ export class HomePage {
             (stateWasRestored) => {
                 this.nav.viewDidEnter.subscribe(
                     (view) => {
-                        console.log('view did enter:', view);
                         saveNavState(this.nav, this.lookupService);
                     },
-                    (param) => { console.log(`view pushed error:`, param); },
-                    (param) => { console.log(`view pushed complete:`, param); });
+                    (param) => { console.log('view pushed error:', param); },
+                    (param) => { console.log('view pushed complete:', param); });
             });
     }
 
     ionViewDidEnter() {
+        this.lookupService.clearProviders();
         resetSavedState();
     }
 
