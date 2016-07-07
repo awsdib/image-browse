@@ -3,6 +3,7 @@ import {Alert, Modal, NavController, NavParams} from 'ionic-angular';
 import {ImagePage} from '../image/image';
 import {LookupService, Options, Provider} from '../../backends/lookup-service';
 import {SearchModal} from '../search-modal/search-modal';
+import {saveNavState} from '../../save-restore';
 
 export interface Post {
     image: string,
@@ -25,16 +26,17 @@ export class GalleryPage {
 
     constructor(
         private nav: NavController,
-        private lookup: LookupService,
+        private lookupService: LookupService,
         navParams: NavParams
     ) {
         this.hostname = navParams.get('hostname');
         this.options = navParams.get('options');
 
-        this.provider = this.lookup.getProvider(this.hostname, this.options);
+        this.provider = this.lookupService.getProvider(this.hostname, this.options);
 
         if (navParams.get('restore')) {
-            // TODO: Restore page from previous session.
+            this.posts = this.provider.allPosts();
+            this.rebuildGrid();
         } else {
             // TODO: Initialize new page.
         }
@@ -51,9 +53,11 @@ export class GalleryPage {
         this.provider.getPosts(
             this.posts.length,
             (posts: Post[], more: boolean) => {
-                this.posts = posts;
+                Array.prototype.push.apply(this.posts, posts);
                 this.rebuildGrid();
                 this.more = more;
+
+                saveNavState(this.nav, this.lookupService);
             },
             (message: string) => {
                 let alert = Alert.create({
@@ -96,20 +100,21 @@ export class GalleryPage {
             this.posts.length,
             (posts, more) => {
                 Array.prototype.push.apply(this.posts, posts);
-                console.log(`total posts: ${this.posts.length}`);
                 this.rebuildGrid();
                 $event.complete();
                 $event.enable(more);
+
+                saveNavState(this.nav, this.lookupService);
             },
             error => {
-                console.log(`Error getting more posts: ${error}`);
+                console.log('Error getting more posts:', error);
                 $event.complete();
             }
         );
     }
 
     rebuildGrid() {
-        // HACK: We need the style to be 'url(...)' and that doesn't seem to work with Angular's style
+        // HACK: We need the style to be "background-image: url(...);" and that doesn't seem to work with Angular's style
         // bindings, so we have to build the string from code and just set it in the template.
         for (let post of this.posts) {
             (<any>post).style = {
