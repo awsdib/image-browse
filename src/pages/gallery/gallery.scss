@@ -1,0 +1,46 @@
+.gallery-page {
+    ion-row {
+        padding: 10px;
+
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        align-content: flex-start;
+
+        ion-col {
+            width: 100px;
+            margin: 10px;
+
+            flex: 1 0 100px;
+
+            .thumb {
+                // Use width and padding-top to force square element.
+                width: 100px;
+                padding-top: 100px;
+
+                position: relative;
+
+                img {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+
+                    padding: 0%;
+                    width: 100%;
+                    height: 100%;
+
+                    object-fit: cover;
+                }
+            }
+
+            &:empty {
+                height: 0;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+            };
+        }
+    }
+}
