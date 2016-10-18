@@ -7,5 +7,9 @@ import { NavController, NavParams } from 'ionic-angular';
     templateUrl: 'gallery.html'
 })
 export class GalleryPage {
-    constructor(public nav: NavController, navParams: NavParams) {}
+    thumbnails: string[] = [];
+
+    constructor(public nav: NavController, params: NavParams) {
+        this.thumbnails = params.get('thumbnails');
+    }
 }
