@@ -7,9 +7,9 @@
 <ion-content text-center class="gallery-page">
 
   <ion-row>
-    <ion-col *ngFor="let thumbnail of thumbnails">
+    <ion-col *ngFor="let item of items">
         <div class="thumb">
-            <img ion-button [src]="thumbnail">
+            <img ion-button [src]="item.thumbnail">
         </div>
     </ion-col>
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Headers, Http } from '@angular/http';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
@@ -8,28 +8,41 @@ import 'rxjs/add/operator/toPromise';
 export class GalleryService {
     constructor(private http: Http) {}
 
-    getGallery(): Promise<Gallery> {
+    getGallery(): Promise<GalleryItem[]> {
         let url = 'https://api.imgur.com/3/gallery/hot/viral/0.json';
-        return this.http.get(url)
+        console.log('using client id: 3c11f0f3bfe340d');
+        return this.http
+            .get(url, {
+                headers: new Headers({ 'Authorization': 'Client-ID 3c11f0f3bfe340d' })
+            })
             .map(response => {
                 let responseJson = response.json();
                 console.log('response: ', responseJson);
 
-                let images = responseJson.data.filter(item => !item.is_album);
+                let gallery = responseJson.data.map(item => {
+                    let thumbnail;
+                    if (item.is_album) {
+                        thumbnail = 'http://i.imgur.com/' + item.cover + 'b.gif';
+                    } else {
+                        thumbnail = 'http://i.imgur.com/' + item.id + 'b.gif'
+                    }
 
-                console.log('images only: ', images);
+                    return {
+                        isAlbum: item.is_album,
+                        thumbnail: thumbnail
+                    };
+                });
 
-                let thumbnails = images.map(item => 'http://i.imgur.com/' + item.id + 'b.gif');
+                console.log('gallery items: ', gallery);
 
-                console.log('thumbnail urls: ', thumbnails);
-
-                return { thumbnails: thumbnails };
+                return gallery;
             })
             .toPromise()
             .catch(error => { console.log("error response:", error); });
     }
 }
 
-export class Gallery {
-    thumbnails: string[];
+export class GalleryItem {
+    isAlbum: boolean;
+    thumbnail: string;
 }

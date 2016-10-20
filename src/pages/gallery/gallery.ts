@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { NavController, NavParams } from 'ionic-angular';
 
-import { GalleryService } from '../../services/gallery.service';
+import { GalleryItem, GalleryService } from '../../services/gallery.service';
 
 @Component({
     selector: 'page-gallery',
@@ -10,7 +10,7 @@ import { GalleryService } from '../../services/gallery.service';
     providers: [GalleryService]
 })
 export class GalleryPage implements OnInit {
-    thumbnails: string[] = [];
+    items: GalleryItem[];
 
     constructor(
         private galleryService: GalleryService,
@@ -24,9 +24,6 @@ export class GalleryPage implements OnInit {
         console.log('GalleryPage.ngOnInit()');
         this.galleryService
             .getGallery()
-            .then(gallery => {
-                console.log('gallery response:', gallery);
-                this.thumbnails = gallery.thumbnails;
-            });
+            .then(gallery => { this.items = gallery; });
     }
 }
