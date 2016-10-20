@@ -1,15 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { NavController, NavParams } from 'ionic-angular';
 
+import { GalleryService } from '../../services/gallery.service';
+
 @Component({
     selector: 'page-gallery',
-    templateUrl: 'gallery.html'
+    templateUrl: 'gallery.html',
+    providers: [GalleryService]
 })
-export class GalleryPage {
+export class GalleryPage implements OnInit {
     thumbnails: string[] = [];
 
-    constructor(public nav: NavController, params: NavParams) {
-        this.thumbnails = params.get('thumbnails');
+    constructor(
+        private galleryService: GalleryService,
+        public nav: NavController,
+        params: NavParams
+    ) {
+        console.log('nav params', params);
+    }
+
+    ngOnInit() {
+        console.log('GalleryPage.ngOnInit()');
+        this.galleryService
+            .getGallery()
+            .then(gallery => {
+                console.log('gallery response:', gallery);
+                this.thumbnails = gallery.thumbnails;
+            });
     }
 }
