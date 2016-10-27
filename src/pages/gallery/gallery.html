@@ -4,32 +4,6 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content text-center class="gallery-page">
-
-  <ion-row>
-    <ion-col *ngFor="let item of items">
-        <div class="thumb">
-            <img ion-button [src]="item.thumbnail">
-        </div>
-    </ion-col>
-
-    <!-- A bunch of extra empty cells in order to force correct alignment in partial rows: http://stackoverflow.com/a/22018710/6649664 -->
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-    <ion-col></ion-col>
-  </ion-row>
-
+<ion-content text-center>
+  <gallery [items]="items"></gallery>
 </ion-content>

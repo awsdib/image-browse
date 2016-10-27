@@ -1,0 +1,27 @@
+<div class="gallery">
+  <ion-row>
+    <ion-col *ngFor="let item of items" (click)="onItemClick(item)">
+      <div class="thumb">
+        <img ion-button [src]="item.thumbnail">
+      </div>
+    </ion-col>
+
+    <!-- A bunch of extra empty cells in order to force correct alignment in partial rows: http://stackoverflow.com/a/22018710/6649664 -->
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+    <ion-col></ion-col>
+  </ion-row>
+</div>

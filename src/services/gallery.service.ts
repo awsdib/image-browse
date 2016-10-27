@@ -15,34 +15,72 @@ export class GalleryService {
             .get(url, {
                 headers: new Headers({ 'Authorization': 'Client-ID 3c11f0f3bfe340d' })
             })
-            .map(response => {
-                let responseJson = response.json();
-                console.log('response: ', responseJson);
-
-                let gallery = responseJson.data.map(item => {
-                    let thumbnail;
-                    if (item.is_album) {
-                        thumbnail = 'http://i.imgur.com/' + item.cover + 'b.gif';
-                    } else {
-                        thumbnail = 'http://i.imgur.com/' + item.id + 'b.gif'
-                    }
-
-                    return {
-                        isAlbum: item.is_album,
-                        thumbnail: thumbnail
-                    };
-                });
-
-                console.log('gallery items: ', gallery);
-
-                return gallery;
-            })
             .toPromise()
-            .catch(error => { console.log("error response:", error); });
+            .then(
+                (response) => {
+                    let responseJson = response.json();
+                    console.log('response: ', responseJson);
+
+                    let promises: Promise<GalleryItem>[] = responseJson.data.map(item => {
+                        if (!item.is_album) {
+                            return Promise.resolve({
+                                isGallery: false,
+                                thumbnail: 'http://i.imgur.com/' + item.id + 'b.gif',
+                                url: item.link,
+                            });
+                        }
+
+                        // Create another request to get the information for the album.
+                        let url = `https://api.imgur.com/3/album/${item.id}`;
+
+                        return this.http
+                            .get(url, {
+                                headers: new Headers({ 'Authorization': 'Client-ID 3c11f0f3bfe340d' })
+                            })
+                            .toPromise()
+                            .then(
+                                (response) => {
+                                    let responseJson = response.json();
+                                    console.log("Album json: ", responseJson);
+
+                                    let items = responseJson.data.images.map(image => {
+                                        return {
+                                            isGallery: false,
+                                            thumbnail: 'http://i.imgur.com/' + image.id + 'b.gif',
+                                            url: image.link,
+                                        };
+                                    });
+
+                                    return {
+                                        isGallery: true,
+                                        thumbnail: 'http://i.imgur.com/' + item.cover + 'b.gif',
+                                        items: items,
+                                    };
+                                }
+                            );
+                    });
+
+                    return Promise.all(promises);
+                },
+                (error) => {
+                    console.log("Error occurred: ", error);
+                },
+            );
     }
 }
 
+// TODO: Figure out how to represent the difference between gallery images and gallery albums better.
 export class GalleryItem {
-    isAlbum: boolean;
+    isGallery: boolean;
     thumbnail: string;
+
+    // Only if is a single image.
+    url: string;
+
+    // Only if is a gallery.
+    items: GalleryItem[];
+}
+
+export class Image {
+    url: string;
 }

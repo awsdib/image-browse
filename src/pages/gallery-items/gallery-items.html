@@ -1,0 +1,19 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>GalleryItemsPage</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+    <ion-slides>
+        <ion-slide *ngFor="let item of items">
+          <!-- Current item is an another gallery -->
+          <gallery [items]="item.items" *ngIf="item.isGallery"></gallery>
+
+          <!-- Current item is a single image -->
+          <img [src]="item.url" *ngIf="!item.isGallery">
+        </ion-slide>
+    </ion-slides>
+</ion-content>
