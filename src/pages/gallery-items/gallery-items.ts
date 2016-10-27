@@ -8,18 +8,24 @@ import { GalleryItem, GalleryService } from '../../services/gallery.service';
   providers: [GalleryService],
 })
 export class GalleryItemsPage implements OnInit {
+    id: string;
+    selected: GalleryItem;
+
     items: GalleryItem[] = [];
 
-    constructor(private galleryService: GalleryService, private navCtrl: NavController, params: NavParams,) {}
+    constructor(
+        private galleryService: GalleryService,
+        private navCtrl: NavController,
+        params: NavParams,
+    ) {
+        this.id = params.get('id');
+        this.selected = params.get('selected');
+    }
 
     ngOnInit() {
         console.log('GalleryPage.ngOnInit()');
         this.galleryService
-            .getGallery()
+            .getGalleryItems(this.id)
             .then(gallery => { this.items = gallery; });
-    }
-
-    ionViewDidLoad() {
-        console.log('Hello GalleryItemsPage Page');
     }
 }
