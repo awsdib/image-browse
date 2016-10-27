@@ -6,14 +6,16 @@
 
 </ion-header>
 
-<ion-content padding>
+<ion-content>
     <ion-slides>
         <ion-slide *ngFor="let item of items">
-          <!-- Current item is an another gallery -->
-          <gallery [id]="item.id" *ngIf="item.isGallery"></gallery>
+          <ion-scroll scrollY="true" zoom="true">
+            <!-- Current item is an another gallery -->
+            <gallery [id]="item.id" *ngIf="item.isGallery"></gallery>
 
-          <!-- Current item is a single image -->
-          <img [src]="item.url" *ngIf="!item.isGallery">
+            <!-- Current item is a single image -->
+            <img [src]="item.url" *ngIf="!item.isGallery">
+          </ion-scroll>
         </ion-slide>
     </ion-slides>
 </ion-content>
